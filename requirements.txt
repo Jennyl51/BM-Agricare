@@ -1,0 +1,20 @@
+# Web Framework
+fastapi
+uvicorn[standard]
+python-multipart
+
+# AWS Services (Cognito, RDS, EC2)
+boto3
+python-jose[cryptography]
+
+# Database (RDS)
+sqlalchemy
+psycopg2-binary
+
+# Data Validation & Config
+pydantic
+pydantic-settings
+python-dotenv
+
+# HTTP Client
+httpx
