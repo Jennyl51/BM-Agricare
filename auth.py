@@ -77,7 +77,7 @@ def login(request: LoginRequest):
 @router.post("/signup")
 def signup(request: SignupRequest):
     try:
-        cognito.sign_up(
+        response = cognito.sign_up(
             ClientId=COGNITO_CLIENT_ID,
             Username=request.username,
             Password=request.password,
@@ -88,23 +88,26 @@ def signup(request: SignupRequest):
                 {"Name": "custom:user_type", "Value": request.user_type.value},
             ],
         )
+        user_id = response["UserSub"]
         cognito.admin_confirm_sign_up(
             UserPoolId=USER_POOL_ID,
             Username=request.username
         )
-        
+
         with engine.connect() as conn:
             conn.execute(
                 text("""
-                    INSERT INTO users (username, name, email, phone_number, user_type)
-                    VALUES (:username, :name, :email, :phone_number, :user_type)
+                    INSERT INTO retailers (user_id, username, name, phone_number, tier, total_points, assigned_tce_id)
+                    VALUES (:user_id, :username, :name, :phone_number, :tier, :total_points, :assigned_tce_id)
                 """),
                 {
+                    "user_id": user_id,
                     "username": request.username,
                     "name": request.name,
-                    "email": request.email,
                     "phone_number": request.phone_number,
-                    "user_type": request.user_type.value,
+                    "tier": "bronze",
+                    "total_points": 0,
+                    "assigned_tce_id": None,
                 },
             )
             conn.commit()

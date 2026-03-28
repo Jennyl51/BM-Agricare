@@ -3,13 +3,18 @@ import boto3
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Header, HTTPException, Depends
 from pydantic import BaseModel
+from sqlalchemy import text
+from database import get_engine
 
 from typing import Optional
 
 router = APIRouter(tags=["users"])
 
+COGNITO_CLIENT_ID = "58u6mgvkgd913nbhm86oe7mahq"
 USER_POOL_ID = "us-east-2_8xjirMuVZ"
 REGION = "us-east-2"
+SECRET_NAME = "database-2"
+engine = get_engine(SECRET_NAME, REGION)
 
 cognito = boto3.client("cognito-idp", region_name=REGION)
 
@@ -36,26 +41,39 @@ def require_admin(user=Depends(get_current_user)):
 
 # GET /users/me - get current user's profile
 @router.get("/users/me")
-def get_user_me(user = Depends(get_current_user)):
-    
-    return user
+def get_user_me(user=Depends(get_current_user)):
+    with engine.connect() as conn:
+        result = conn.execute(
+            text("SELECT * FROM retailers WHERE user_id = :user_id"),
+            {"user_id": user["user_id"]},
+        )
+        row = result.mappings().first()
+        if not row:
+            raise HTTPException(status_code=404, detail="User not found in database")
+        return dict(row)
 
 class UpdateUserRequest(BaseModel):
-    email: Optional[str] = None
-    user_type: Optional[str] = None
+    name: Optional[str] = None
+    phone_number: Optional[str] = None
 
 # PATCH /users/me - update current user's profile
 @router.patch("/users/me")
-def update_user_me(request: UpdateUserRequest, user=Depends(get_current_user), authorization: str = Header()):
-    token = authorization.replace("Bearer ", "")
-    attributes = []
-    if request.email:
-        attributes.append({"Name": "email", "Value": request.email})
-    if request.user_type:
-        attributes.append({"Name": "custom:user_type", "Value": request.user_type})
-    if not attributes:
+def update_user_me(request: UpdateUserRequest, user=Depends(get_current_user)):
+    updates = {}
+    if request.name is not None:
+        updates["name"] = request.name
+    if request.phone_number is not None:
+        updates["phone_number"] = request.phone_number
+    if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
-    cognito.update_user_attributes(AccessToken=token, UserAttributes=attributes)
+    set_clause = ", ".join(f"{key} = :{key}" for key in updates)
+    updates["user_id"] = user["user_id"]
+    with engine.connect() as conn:
+        conn.execute(
+            text(f"UPDATE retailers SET {set_clause} WHERE user_id = :user_id"),
+            updates,
+        )
+        conn.commit()
     return {"message": "User updated"}
 
 
@@ -78,28 +96,88 @@ def get_admin_users(user=Depends(require_admin)):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+class AdminCreateUserRequest(BaseModel):
+    username: str
+    password: str
+    name: str
+    email: str
+    phone_number: str
+    user_type: str
+
+
+# POST /admin/users - create a user (admin)
+@router.post("/admin/users")
+def create_admin_user(request: AdminCreateUserRequest, user=Depends(require_admin)):
+    try:
+        response = cognito.sign_up(
+            ClientId=COGNITO_CLIENT_ID,
+            Username=request.username,
+            Password=request.password,
+            UserAttributes=[
+                {"Name": "name", "Value": request.name},
+                {"Name": "email", "Value": request.email},
+                {"Name": "phone_number", "Value": request.phone_number},
+                {"Name": "custom:user_type", "Value": request.user_type},
+            ],
+        )
+        user_id = response["UserSub"]
+        cognito.admin_confirm_sign_up(
+            UserPoolId=USER_POOL_ID,
+            Username=request.username,
+        )
+        with engine.connect() as conn:
+            conn.execute(
+                text("""
+                    INSERT INTO retailers (user_id, username, name, phone_number, tier, total_points, assigned_tce_id)
+                    VALUES (:user_id, :username, :name, :phone_number, :tier, :total_points, :assigned_tce_id)
+                """),
+                {
+                    "user_id": user_id,
+                    "username": request.username,
+                    "name": request.name,
+                    "phone_number": request.phone_number,
+                    "tier": "bronze",
+                    "total_points": 0,
+                    "assigned_tce_id": None,
+                },
+            )
+            conn.commit()
+        return {"message": f"User created: {request.username}", "user_id": user_id}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
 class AdminUpdateUserRequest(BaseModel):
-    email: Optional[str] = None
-    user_type: Optional[str] = None
+    name: Optional[str] = None
+    phone_number: Optional[str] = None
+    tier: Optional[str] = None
+    total_points: Optional[int] = None
+    assigned_tce_id: Optional[str] = None
 
 # PATCH /admin/users/:id - update a user (admin)
 @router.patch("/admin/users/{user_id}")
 def update_admin_user(user_id: str, request: AdminUpdateUserRequest, user=Depends(require_admin)):
-    try:
-        attributes = []
-        if request.email:
-            attributes.append({"Name": "email", "Value": request.email})
-        if request.user_type:
-            attributes.append({"Name": "custom:user_type", "Value": request.user_type})
-        if not attributes:
-            raise HTTPException(status_code=400, detail="No fields to update")
-        cognito.admin_update_user_attributes(
-            UserPoolId=USER_POOL_ID,
-            Username=user_id,
-            UserAttributes=attributes,
+    updates = {}
+    if request.name is not None:
+        updates["name"] = request.name
+    if request.phone_number is not None:
+        updates["phone_number"] = request.phone_number
+    if request.tier is not None:
+        updates["tier"] = request.tier
+    if request.total_points is not None:
+        updates["total_points"] = request.total_points
+    if request.assigned_tce_id is not None:
+        updates["assigned_tce_id"] = request.assigned_tce_id
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    set_clause = ", ".join(f"{key} = :{key}" for key in updates)
+    updates["user_id"] = user_id
+    with engine.connect() as conn:
+        result = conn.execute(
+            text(f"UPDATE retailers SET {set_clause} WHERE user_id = :user_id"),
+            updates,
         )
-        return {"message": f"User {user_id} updated"}
-    except cognito.exceptions.UserNotFoundException:
-        raise HTTPException(status_code=404, detail="User not found")
-    except ClientError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        conn.commit()
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+    return {"message": f"User {user_id} updated"}
