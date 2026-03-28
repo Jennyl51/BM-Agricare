@@ -114,8 +114,14 @@
                 if (accessToken) opts.headers["Authorization"] = "Bearer " + accessToken;
                 if (body) opts.body = JSON.stringify(body);
                 const res = await fetch(API + path, opts);
-                const data = await res.json();
-                el.textContent = JSON.stringify(data, null, 2);
+                const text = await res.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                    el.textContent = JSON.stringify(data, null, 2);
+                } catch {
+                    el.textContent = "Status: " + res.status + "\n" + text;
+                }
                 return data;
             } catch (e) {
                 el.textContent = "Error: " + e.message;

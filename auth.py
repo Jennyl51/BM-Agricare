@@ -108,11 +108,14 @@ def signup(request: SignupRequest):
                 },
             )
             conn.commit()
+        
         return {"message": f"User created: {request.username}"}
     except cognito.exceptions.UsernameExistsException:
         raise HTTPException(status_code=409, detail="Username already exists")
     except ClientError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 
