@@ -55,6 +55,7 @@ def get_user_me(user=Depends(get_current_user)):
 class UpdateUserRequest(BaseModel):
     name: Optional[str] = None
     phone_number: Optional[str] = None
+    region: Optional[str] = None
 
 # PATCH /users/me - update current user's profile
 @router.patch("/users/me")
@@ -64,6 +65,8 @@ def update_user_me(request: UpdateUserRequest, user=Depends(get_current_user)):
         updates["name"] = request.name
     if request.phone_number is not None:
         updates["phone_number"] = request.phone_number
+    if request.region is not None:
+        updates["region"] = request.region
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
     set_clause = ", ".join(f"{key} = :{key}" for key in updates)
@@ -81,18 +84,11 @@ def update_user_me(request: UpdateUserRequest, user=Depends(get_current_user)):
 @router.get("/admin/users")
 def get_admin_users(user=Depends(require_admin)):
     try:
-        response = cognito.list_users(UserPoolId=USER_POOL_ID)
-        users = []
-        for user in response["Users"]:
-            attributes = {attr["Name"]: attr["Value"] for attr in user["Attributes"]}
-            users.append({
-                "username": user["Username"],
-                "email": attributes.get("email"),
-                "user_type": attributes.get("custom:user_type"),
-                "status": user["UserStatus"],
-            })
-        return users
-    except ClientError as e:
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT * FROM retailers"))
+            rows = [dict(row) for row in result.mappings()]
+        return rows
+    except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -128,8 +124,8 @@ def create_admin_user(request: AdminCreateUserRequest, user=Depends(require_admi
         with engine.connect() as conn:
             conn.execute(
                 text("""
-                    INSERT INTO retailers (user_id, username, name, email, phone_number, tier, total_points, assigned_tce_id)
-                    VALUES (:user_id, :username, :name, :email, :phone_number, :tier, :total_points, :assigned_tce_id)
+                    INSERT INTO retailers (user_id, username, name, email, phone_number, region, tier, total_points, assigned_tce_id)
+                    VALUES (:user_id, :username, :name, :email, :phone_number, :region, :tier, :total_points, :assigned_tce_id)
                 """),
                 {
                     "user_id": user_id,
@@ -137,6 +133,7 @@ def create_admin_user(request: AdminCreateUserRequest, user=Depends(require_admi
                     "name": request.name,
                     "email": request.email,
                     "phone_number": request.phone_number,
+                    "region": None,
                     "tier": "bronze",
                     "total_points": 0,
                     "assigned_tce_id": None,
@@ -151,6 +148,7 @@ def create_admin_user(request: AdminCreateUserRequest, user=Depends(require_admi
 class AdminUpdateUserRequest(BaseModel):
     name: Optional[str] = None
     phone_number: Optional[str] = None
+    region: Optional[str] = None
     tier: Optional[str] = None
     total_points: Optional[int] = None
     assigned_tce_id: Optional[str] = None
@@ -163,6 +161,8 @@ def update_admin_user(user_id: str, request: AdminUpdateUserRequest, user=Depend
         updates["name"] = request.name
     if request.phone_number is not None:
         updates["phone_number"] = request.phone_number
+    if request.region is not None:
+        updates["region"] = request.region
     if request.tier is not None:
         updates["tier"] = request.tier
     if request.total_points is not None:
