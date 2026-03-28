@@ -20,7 +20,7 @@ def get_db_credentials(secret_name: str, region: str = "us-east-2") -> dict:
 
 def get_engine(secret_name: str, region: str):
     creds = get_db_credentials(secret_name, region)
-    dbname = creds.get("dbname", creds.get("dbInstanceIdentifier", "postgres"))
+    dbname = creds.get("dbname", "test")
     url = (
         f"postgresql://{creds['username']}:{creds['password']}"
         f"@{creds['host']}:{creds['port']}/{dbname}"
