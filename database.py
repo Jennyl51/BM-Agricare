@@ -28,17 +28,23 @@ def get_engine(secret_name: str, region: str):
     return create_engine(url)
 
 
-# Quick test
 if __name__ == "__main__":
-    SECRET_NAME = "database-2"  
+    SECRET_NAME = "database-2"
     REGION = "us-east-2"
 
-    get_db_credentials(SECRET_NAME, REGION)
+    try:
+        engine = get_engine(SECRET_NAME, REGION)
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT version();"))
+            print("Connected to:", result.scalar())
 
+            result = conn.execute(text("SELECT current_database();"))
+            print("Database:", result.scalar())
 
-    # engine = get_engine(SECRET_NAME, REGION)
-    # Session = sessionmaker(bind=engine)
-
-    # with Session() as session:
-    #     result = session.execute(text("SELECT version();"))
-    #     print("Connected to:", result.scalar())
+            result = conn.execute(text("""
+                SELECT user_id FROM retailers;
+            """))
+            tables = [row[0] for row in result]
+            print("Tables:", tables if tables else "No tables found")
+    except Exception as e:
+        print(f"Connection failed: {e}")

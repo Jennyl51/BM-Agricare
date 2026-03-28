@@ -5,6 +5,8 @@ from enum import Enum
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from sqlalchemy import text
+from database import get_engine
 
 # Run these to signin and login
 
@@ -24,6 +26,9 @@ USER_POOL_ID = "us-east-2_8xjirMuVZ"
 REGION = "us-east-2"
 
 cognito = boto3.client("cognito-idp", region_name=REGION)
+
+SECRET_NAME = "database-2"
+engine = get_engine(SECRET_NAME, REGION)
 
 
 class UserType(str, Enum):
@@ -87,6 +92,22 @@ def signup(request: SignupRequest):
             UserPoolId=USER_POOL_ID,
             Username=request.username
         )
+        
+        with engine.connect() as conn:
+            conn.execute(
+                text("""
+                    INSERT INTO users (username, name, email, phone_number, user_type)
+                    VALUES (:username, :name, :email, :phone_number, :user_type)
+                """),
+                {
+                    "username": request.username,
+                    "name": request.name,
+                    "email": request.email,
+                    "phone_number": request.phone_number,
+                    "user_type": request.user_type.value,
+                },
+            )
+            conn.commit()
         return {"message": f"User created: {request.username}"}
     except cognito.exceptions.UsernameExistsException:
         raise HTTPException(status_code=409, detail="Username already exists")
