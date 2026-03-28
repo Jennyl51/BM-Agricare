@@ -1,26 +1,48 @@
 import boto3
+
+from enum import Enum
+
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+# Run these to signin and login
+
+# curl -X POST http://127.0.0.1:8000/auth/signup \
+#   -H "Content-Type: application/json" \
+#   -d '{"username": "testuser", "password": "TestPass123!", "name": "Test User", "email": "test@example.com", "phone_number": "+11234567890", "user_type": "base"}'
+
+# curl -X POST http://127.0.0.1:8000/auth/login \
+#   -H "Content-Type: application/json" \
+#   -d '{"username": "testuser", "password": "TestPass123!"}'
+
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-COGNITO_CLIENT_ID = "us-east-2_8xjirMuVZ"  # replace this
+COGNITO_CLIENT_ID = "58u6mgvkgd913nbhm86oe7mahq"
+USER_POOL_ID = "us-east-2_8xjirMuVZ"
 REGION = "us-east-2"
 
 cognito = boto3.client("cognito-idp", region_name=REGION)
 
 
-class LoginRequest(BaseModel):
-    username: str
-    password: str
+class UserType(str, Enum):
+    base = "base"
+    tce = "tce"
+    ADMIN = "admin"
 
 
 class SignupRequest(BaseModel):
     username: str
     password: str
+    name: str
     email: str
+    phone_number: str
+    user_type: UserType
 
+class LoginRequest(BaseModel):
+    username: str
+    password: str
 
 @router.post("/login")
 def login(request: LoginRequest):
@@ -55,32 +77,22 @@ def signup(request: SignupRequest):
             Username=request.username,
             Password=request.password,
             UserAttributes=[
+                {"Name": "name", "Value": request.name},
                 {"Name": "email", "Value": request.email},
+                {"Name": "phone_number", "Value": request.phone_number},
+                {"Name": "custom:user_type", "Value": request.user_type.value},
             ],
         )
-        return {"message": "User created. Check email for verification code."}
+        cognito.admin_confirm_sign_up(
+            UserPoolId=USER_POOL_ID,
+            Username=request.username
+        )
+        return {"message": f"User created: {request.username}"}
     except cognito.exceptions.UsernameExistsException:
         raise HTTPException(status_code=409, detail="Username already exists")
     except ClientError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
-class ConfirmRequest(BaseModel):
-    username: str
-    code: str
-
-
-@router.post("/confirm")
-def confirm(request: ConfirmRequest):
-    try:
-        cognito.confirm_sign_up(
-            ClientId=COGNITO_CLIENT_ID,
-            Username=request.username,
-            ConfirmationCode=request.code,
-        )
-        return {"message": "Account confirmed"}
-    except ClientError as e:
-        raise HTTPException(status_code=400, detail=str(e))
 
 
 if __name__ == "__main__":
@@ -90,6 +102,5 @@ if __name__ == "__main__":
         pool = response["UserPool"]
         print(f"Connected to Cognito User Pool: {pool['Name']}")
         print(f"ID: {pool['Id']}")
-        print(f"Status: {pool['Status']}")
     except ClientError as e:
         print(f"Failed to connect: {e}")

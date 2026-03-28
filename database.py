@@ -1,11 +1,15 @@
 import json
 
 import boto3
+
 from botocore.exceptions import ClientError
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
+router = APIRouter(prefix="/database", tags=["database"])
 
 def get_db_credentials(secret_name: str, region: str = "us-east-2") -> dict:
     client = boto3.client("secretsmanager", region_name=region)
