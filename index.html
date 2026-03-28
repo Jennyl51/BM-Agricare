@@ -70,10 +70,10 @@
         <!-- Update Me -->
         <div class="section">
             <h2>PATCH /users/me</h2>
-            <label>Email (optional)</label>
-            <input id="updateEmail" placeholder="new@example.com">
-            <label>User Type (optional)</label>
-            <input id="updateUserType" placeholder="base">
+            <label>Name (optional)</label>
+            <input id="updateName" placeholder="New Name">
+            <label>Phone Number (optional)</label>
+            <input id="updatePhone" placeholder="+11234567890">
             <button onclick="updateMe()">Update Profile</button>
             <div class="response" id="updateMeResponse"></div>
         </div>
@@ -85,15 +85,40 @@
             <div class="response" id="adminUsersResponse"></div>
         </div>
 
+        <!-- Admin: Create User -->
+        <div class="section">
+            <h2>POST /admin/users</h2>
+            <label>Username</label>
+            <input id="adminCreateUsername" placeholder="newuser">
+            <label>Password</label>
+            <input id="adminCreatePassword" type="password" placeholder="Password123!">
+            <label>Name</label>
+            <input id="adminCreateName" placeholder="New User">
+            <label>Email</label>
+            <input id="adminCreateEmail" placeholder="user@example.com">
+            <label>Phone Number</label>
+            <input id="adminCreatePhone" placeholder="+11234567890">
+            <label>User Type</label>
+            <input id="adminCreateUserType" placeholder="base">
+            <button onclick="createAdminUser()">Create User</button>
+            <div class="response" id="adminCreateResponse"></div>
+        </div>
+
         <!-- Admin: Update User -->
         <div class="section">
             <h2>PATCH /admin/users/:id</h2>
             <label>User ID</label>
-            <input id="adminUserId" placeholder="username or sub">
-            <label>Email (optional)</label>
-            <input id="adminUpdateEmail" placeholder="new@example.com">
-            <label>User Type (optional)</label>
-            <input id="adminUpdateUserType" placeholder="admin">
+            <input id="adminUserId" placeholder="user uuid">
+            <label>Name (optional)</label>
+            <input id="adminUpdateName" placeholder="New Name">
+            <label>Phone Number (optional)</label>
+            <input id="adminUpdatePhone" placeholder="+11234567890">
+            <label>Tier (optional)</label>
+            <input id="adminUpdateTier" placeholder="bronze">
+            <label>Total Points (optional)</label>
+            <input id="adminUpdatePoints" placeholder="0">
+            <label>Assigned TCE ID (optional)</label>
+            <input id="adminUpdateTceId" placeholder="tce-uuid">
             <button onclick="updateAdminUser()">Update User</button>
             <div class="response" id="adminUpdateResponse"></div>
         </div>
@@ -156,10 +181,10 @@
 
         async function updateMe() {
             const body = {};
-            const email = document.getElementById("updateEmail").value;
-            const userType = document.getElementById("updateUserType").value;
-            if (email) body.email = email;
-            if (userType) body.user_type = userType;
+            const name = document.getElementById("updateName").value;
+            const phone = document.getElementById("updatePhone").value;
+            if (name) body.name = name;
+            if (phone) body.phone_number = phone;
             await request("PATCH", "/users/me", body, "updateMeResponse");
         }
 
@@ -167,13 +192,30 @@
             await request("GET", "/admin/users", null, "adminUsersResponse");
         }
 
+        async function createAdminUser() {
+            await request("POST", "/admin/users", {
+                username: document.getElementById("adminCreateUsername").value,
+                password: document.getElementById("adminCreatePassword").value,
+                name: document.getElementById("adminCreateName").value,
+                email: document.getElementById("adminCreateEmail").value,
+                phone_number: document.getElementById("adminCreatePhone").value,
+                user_type: document.getElementById("adminCreateUserType").value,
+            }, "adminCreateResponse");
+        }
+
         async function updateAdminUser() {
             const userId = document.getElementById("adminUserId").value;
             const body = {};
-            const email = document.getElementById("adminUpdateEmail").value;
-            const userType = document.getElementById("adminUpdateUserType").value;
-            if (email) body.email = email;
-            if (userType) body.user_type = userType;
+            const name = document.getElementById("adminUpdateName").value;
+            const phone = document.getElementById("adminUpdatePhone").value;
+            const tier = document.getElementById("adminUpdateTier").value;
+            const points = document.getElementById("adminUpdatePoints").value;
+            const tceId = document.getElementById("adminUpdateTceId").value;
+            if (name) body.name = name;
+            if (phone) body.phone_number = phone;
+            if (tier) body.tier = tier;
+            if (points) body.total_points = parseInt(points);
+            if (tceId) body.assigned_tce_id = tceId;
             await request("PATCH", "/admin/users/" + userId, body, "adminUpdateResponse");
         }
     </script>

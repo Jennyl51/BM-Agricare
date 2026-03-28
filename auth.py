@@ -97,13 +97,14 @@ def signup(request: SignupRequest):
         with engine.connect() as conn:
             conn.execute(
                 text("""
-                    INSERT INTO retailers (user_id, username, name, phone_number, tier, total_points, assigned_tce_id)
-                    VALUES (:user_id, :username, :name, :phone_number, :tier, :total_points, :assigned_tce_id)
+                    INSERT INTO retailers (user_id, username, name, email, phone_number, tier, total_points, assigned_tce_id)
+                    VALUES (:user_id, :username, :name, :email, :phone_number, :tier, :total_points, :assigned_tce_id)
                 """),
                 {
                     "user_id": user_id,
                     "username": request.username,
                     "name": request.name,
+                    "email": request.email,
                     "phone_number": request.phone_number,
                     "tier": "bronze",
                     "total_points": 0,
