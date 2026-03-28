@@ -1,17 +1,18 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from auth import router as auth_router
 from users import router as users_router
-from database import router as db_router
 
 app = FastAPI(title="BM-Agricare API")
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.include_router(auth_router)
 app.include_router(users_router)
-app.include_router(db_router)
 
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to BM-Agricare API"}
+    return FileResponse("index.html")
 
 
 @app.get("/health")
