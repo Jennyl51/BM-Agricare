@@ -1,4 +1,5 @@
 import json
+import os
 
 import boto3
 
@@ -18,6 +19,10 @@ def get_db_credentials(secret_name: str, region: str = "us-east-2") -> dict:
 
 
 def get_engine(secret_name: str, region: str):
+    """Use DATABASE_URL for local dev; otherwise load credentials from Secrets Manager."""
+    direct_url = os.environ.get("DATABASE_URL")
+    if direct_url:
+        return create_engine(direct_url)
     creds = get_db_credentials(secret_name, region)
     dbname = creds.get("dbname", "test")
     url = (
