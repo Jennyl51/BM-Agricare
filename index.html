@@ -19,6 +19,11 @@
         .token-bar span { color: #e94560; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+        .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .tabs button.tab { background: #0f3460; margin-top: 0; }
+        .tabs button.tab.active { background: #e94560; }
+        .tab-panel { display: none; }
+        .tab-panel.open { display: block; }
     </style>
 </head>
 <body>
@@ -29,6 +34,15 @@
         <span id="tokenDisplay">Not logged in</span>
     </div>
 
+    <div class="tabs">
+        <button type="button" class="tab active" data-tab="tab-core">Auth &amp; users</button>
+        <button type="button" class="tab" data-tab="tab-points">Points</button>
+        <button type="button" class="tab" data-tab="tab-rewards">Rewards</button>
+        <button type="button" class="tab" data-tab="tab-gifts">Gifts</button>
+        <button type="button" class="tab" data-tab="tab-tce">TCE</button>
+    </div>
+
+    <div id="tab-core" class="tab-panel open">
     <div class="grid">
         <!-- Signup -->
         <div class="section">
@@ -123,10 +137,90 @@
             <div class="response" id="adminUpdateResponse"></div>
         </div>
     </div>
+    </div>
+
+    <div id="tab-points" class="tab-panel">
+        <div class="section">
+            <h2>Points (GET /users/me + GET /points/history)</h2>
+            <p style="margin-bottom:8px;color:#aaa;font-size:13px;">Profile shows current balance; history shows earned and redeemed rows with timestamps.</p>
+            <button onclick="pointsRefreshBalance()">Refresh balance (GET /users/me)</button>
+            <button onclick="pointsHistory()">Points history (GET /points/history)</button>
+            <div class="response" id="pointsBalanceResponse"></div>
+            <div class="response" id="pointsHistoryResponse" style="margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <div id="tab-rewards" class="tab-panel">
+        <div class="section">
+            <h2>Rewards catalog (GET /rewards)</h2>
+            <button onclick="listRewards()">List rewards</button>
+            <div class="response" id="rewardsListResponse"></div>
+        </div>
+        <div class="section">
+            <h2>Redeem (POST /redemptions)</h2>
+            <label>Reward ID (UUID)</label>
+            <input id="redeemRewardId" placeholder="reward uuid">
+            <label>Quantity</label>
+            <input id="redeemQty" type="number" min="1" value="1">
+            <label>Retailer location (optional)</label>
+            <input id="redeemLocation" placeholder="City / address">
+            <button onclick="createRedemption()">Submit redemption</button>
+            <div class="response" id="redeemResponse"></div>
+        </div>
+    </div>
+
+    <div id="tab-gifts" class="tab-panel">
+        <div class="section">
+            <h2>My redemptions (GET /redemptions/me)</h2>
+            <button onclick="myRedemptions()">Load my redemption history</button>
+            <div class="response" id="myRedemptionsResponse"></div>
+        </div>
+    </div>
+
+    <div id="tab-tce" class="tab-panel">
+        <p style="margin-bottom:12px;color:#aaa;font-size:13px;">Log in as a Cognito user with <code>custom:user_type</code> = <code>tce</code>.</p>
+        <div class="section">
+            <h2>TCE queue (GET /tce/redemptions)</h2>
+            <label><input type="checkbox" id="tcePendingOnly" checked> Pending / open only</label>
+            <button onclick="tceListRedemptions()">List</button>
+            <div class="response" id="tceListResponse"></div>
+        </div>
+        <div class="section">
+            <h2>TCE detail (GET /tce/redemptions/:id)</h2>
+            <label>Redemption ID</label>
+            <input id="tceRedemptionId" placeholder="redemption uuid">
+            <button onclick="tceRedemptionDetail()">Load detail</button>
+            <div class="response" id="tceDetailResponse"></div>
+        </div>
+        <div class="section">
+            <h2>TCE update (PATCH /tce/redemptions/:id)</h2>
+            <label>Redemption ID</label>
+            <input id="tcePatchId" placeholder="same as above">
+            <label>Status (optional: pending, processing, shipped, delivered, cancelled)</label>
+            <input id="tcePatchStatus" placeholder="shipped">
+            <label>Task done (optional: true / false)</label>
+            <input id="tcePatchTaskDone" placeholder="true">
+            <label>Notes (optional)</label>
+            <input id="tcePatchNotes" placeholder="Internal note">
+            <button onclick="tcePatchRedemption()">Patch</button>
+            <div class="response" id="tcePatchResponse"></div>
+        </div>
+    </div>
 
     <script>
         const API = "";  // same origin since served by FastAPI
         let accessToken = "";
+
+        document.querySelectorAll(".tabs .tab").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".tabs .tab").forEach((b) => b.classList.remove("active"));
+                document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("open"));
+                btn.classList.add("active");
+                const id = btn.getAttribute("data-tab");
+                const panel = document.getElementById(id);
+                if (panel) panel.classList.add("open");
+            });
+        });
 
         async function request(method, path, body, responseId) {
             const el = document.getElementById(responseId);
@@ -217,6 +311,80 @@
             if (points) body.total_points = parseInt(points);
             if (tceId) body.assigned_tce_id = tceId;
             await request("PATCH", "/admin/users/" + userId, body, "adminUpdateResponse");
+        }
+
+        async function pointsRefreshBalance() {
+            await request("GET", "/users/me", null, "pointsBalanceResponse");
+        }
+
+        async function pointsHistory() {
+            await request("GET", "/points/history", null, "pointsHistoryResponse");
+        }
+
+        async function listRewards() {
+            await request("GET", "/rewards", null, "rewardsListResponse");
+        }
+
+        async function createRedemption() {
+            const rid = document.getElementById("redeemRewardId").value.trim();
+            const qty = parseInt(document.getElementById("redeemQty").value, 10) || 1;
+            const loc = document.getElementById("redeemLocation").value.trim();
+            const body = { items: [{ reward_id: rid, quantity: qty }] };
+            if (loc) body.retailer_location = loc;
+            await request("POST", "/redemptions", body, "redeemResponse");
+        }
+
+        async function myRedemptions() {
+            await request("GET", "/redemptions/me", null, "myRedemptionsResponse");
+        }
+
+        async function tceListRedemptions() {
+            const pendingOnly = document.getElementById("tcePendingOnly").checked;
+            const q = pendingOnly ? "?pending_only=true" : "?pending_only=false";
+            await request("GET", "/tce/redemptions" + q, null, "tceListResponse");
+        }
+
+        async function tceRedemptionDetail() {
+            const id = document.getElementById("tceRedemptionId").value.trim();
+            if (!id) {
+                document.getElementById("tceDetailResponse").textContent = "Enter redemption ID";
+                return;
+            }
+            await request("GET", "/tce/redemptions/" + encodeURIComponent(id), null, "tceDetailResponse");
+        }
+
+        async function tcePatchRedemption() {
+            const id = document.getElementById("tcePatchId").value.trim();
+            if (!id) {
+                document.getElementById("tcePatchResponse").textContent = "Enter redemption ID";
+                return;
+            }
+            const body = {};
+            const st = document.getElementById("tcePatchStatus").value.trim();
+            const td = document.getElementById("tcePatchTaskDone").value.trim();
+            const notes = document.getElementById("tcePatchNotes").value.trim();
+            if (st) body.status = st;
+            if (td === "true" || td === "false") body.task_done = td === "true";
+            if (notes) body.notes = notes;
+            const el = document.getElementById("tcePatchResponse");
+            el.textContent = "Loading...";
+            try {
+                const opts = {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                };
+                if (accessToken) opts.headers["Authorization"] = "Bearer " + accessToken;
+                const res = await fetch(API + "/tce/redemptions/" + encodeURIComponent(id), opts);
+                const text = await res.text();
+                try {
+                    el.textContent = JSON.stringify(JSON.parse(text), null, 2);
+                } catch {
+                    el.textContent = "Status: " + res.status + "\n" + text;
+                }
+            } catch (e) {
+                el.textContent = "Error: " + e.message;
+            }
         }
     </script>
 </body>
