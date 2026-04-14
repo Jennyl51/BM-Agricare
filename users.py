@@ -39,6 +39,12 @@ def require_admin(user=Depends(get_current_user)):
     return user
 
 
+def require_tce(user=Depends(get_current_user)):
+    if user.get("user_type") != "tce":
+        raise HTTPException(status_code=403, detail="TCE access required")
+    return user
+
+
 # GET /users/me - get current user's profile
 @router.get("/users/me")
 def get_user_me(user=Depends(get_current_user)):
