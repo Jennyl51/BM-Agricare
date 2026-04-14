@@ -13,7 +13,7 @@ from services.rewards_service import (
     get_tce_redemptions_to_process,
     update_tce_redemption_request,
 )
-from users import get_current_user, require_tce
+from api.routes.users import get_current_user, require_tce
 
 router = APIRouter(tags=["rewards"])
 

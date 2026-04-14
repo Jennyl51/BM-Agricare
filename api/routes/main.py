@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from auth import router as auth_router
-from users import router as users_router
-from invoices import router as invoices_router
+from api.routes.auth import router as auth_router
+from api.routes.users import router as users_router
+from api.routes.invoices import router as invoices_router
 from api.routes.rewards import router as rewards_router
 
 app = FastAPI(title="BM-Agricare API")
