@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native';
 
 export default function Profile() {
   return (
