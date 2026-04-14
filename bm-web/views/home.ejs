@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'BM AgriCare — Home' }) %>
+  </head>
+  <body class="min-h-screen bg-gray-200 pb-28 text-gray-800 antialiased">
+    <header
+      class="sticky top-0 z-40 border-b-4 border-gray-500 bg-gray-100 pt-[max(0.5rem,env(safe-area-inset-top))] shadow-sm">
+      <div class="relative flex items-center justify-between px-3 py-3">
+        <button
+          type="button"
+          class="flex h-10 w-10 items-center justify-center rounded-md border-2 border-gray-400 bg-gray-50 text-gray-700"
+          aria-label="Open menu">
+          <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div class="pointer-events-none absolute inset-x-0 flex flex-col items-center justify-center text-center">
+          <h1 class="text-lg font-bold tracking-tight text-gray-900">BM AgriCare</h1>
+          <p class="text-xs font-medium uppercase tracking-wide text-gray-500">Home Page</p>
+        </div>
+        <button
+          type="button"
+          class="flex h-10 w-10 items-center justify-center rounded-md border-2 border-gray-400 bg-gray-50 text-gray-700"
+          aria-label="User profile">
+          <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-3 py-4">
+      <section class="mb-6 border-2 border-dashed border-gray-400 bg-gray-100 p-4">
+        <h2 class="mb-3 text-base font-semibold text-gray-800">Technical Guidelines</h2>
+        <div class="overflow-hidden border-2 border-gray-400 bg-gray-300">
+          <img
+            src="<%= placeholder(800, 280, 'Banner') %>"
+            alt=""
+            width="800"
+            height="280"
+            class="block h-auto w-full object-cover"
+            loading="lazy" />
+        </div>
+      </section>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <section class="border-2 border-gray-400 bg-gray-50 p-3">
+          <a
+            href="/products"
+            class="mb-4 flex w-full items-center justify-center border-4 border-gray-500 bg-gray-200 py-3 text-center text-sm font-bold uppercase tracking-wide text-gray-800 active:bg-gray-300">
+            Products
+          </a>
+          <div class="grid grid-cols-2 gap-2">
+            <% for (let i = 1; i <= 4; i++) { %>
+            <article class="border-2 border-gray-400 bg-gray-100 p-2">
+              <div class="mb-2 overflow-hidden border border-gray-400 bg-gray-300 aspect-square">
+                <img
+                  src="<%= placeholder(200, 200, 'P' + i) %>"
+                  alt=""
+                  width="200"
+                  height="200"
+                  class="h-full w-full object-cover"
+                  loading="lazy" />
+              </div>
+              <div class="space-y-1">
+                <div class="h-2.5 w-[85%] rounded bg-gray-500"></div>
+                <div class="h-2 w-full rounded bg-gray-400"></div>
+              </div>
+            </article>
+            <% } %>
+          </div>
+        </section>
+
+        <aside class="border-2 border-gray-400 bg-gray-50 p-3">
+          <h2 class="mb-3 border-b-2 border-gray-400 pb-2 text-sm font-bold uppercase tracking-wide text-gray-700">
+            News
+          </h2>
+          <nav class="flex flex-col gap-3" aria-label="News links">
+            <% for (let n = 1; n <= 6; n++) { %>
+            <a href="#" class="block rounded border border-gray-400 bg-gray-200 p-2 hover:bg-gray-300">
+              <div class="mb-1.5 h-2 w-[92%] rounded bg-gray-500"></div>
+              <div class="h-2 w-[75%] rounded bg-gray-400"></div>
+              <div class="mt-1.5 h-2 w-[58%] rounded bg-gray-300"></div>
+            </a>
+            <% } %>
+          </nav>
+        </aside>
+      </div>
+    </main>
+
+    <% if (showFAB) { %>
+    <button
+      type="button"
+      class="fixed bottom-[5.5rem] right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full border-4 border-gray-600 bg-gray-300 text-xl font-bold text-gray-800 shadow-lg"
+      aria-label="Action">
+      J
+    </button>
+    <% } %>
+
+    <%- include('partials/bottom-nav') %>
+  </body>
+</html>

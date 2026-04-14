@@ -1,0 +1,47 @@
+<nav
+  class="fixed bottom-0 left-0 right-0 z-50 border-t-4 border-gray-500 bg-gray-100 px-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+  aria-label="Primary">
+  <div class="mx-auto flex max-w-lg items-end justify-between gap-1">
+    <a
+      href="/"
+      class="flex flex-1 flex-col items-center gap-1 py-2 text-xs font-medium <%= activeNav === 'home' ? 'text-gray-900' : 'text-gray-600' %>"
+      <%= activeNav === 'home' ? 'aria-current="page"' : '' %>>
+      <svg class="h-6 w-6 <%= activeNav === 'home' ? 'text-gray-900' : 'text-gray-500' %>" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+      Home
+    </a>
+    <a
+      href="/products"
+      class="flex flex-1 flex-col items-center gap-0.5 py-1.5 text-[10px] font-medium leading-tight <%= activeNav === 'search' ? 'text-gray-900' : 'text-gray-600' %>">
+      <svg class="h-6 w-6 <%= activeNav === 'search' ? 'text-gray-900' : 'text-gray-500' %>" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+        <path d="M8 11h6" stroke-linecap="round" />
+      </svg>
+      <span class="text-center">Search/<br />Filter</span>
+    </a>
+    <a
+      href="/products"
+      class="flex flex-1 flex-col items-center gap-1 py-2 text-xs font-medium <%= activeNav === 'square' ? 'text-gray-900' : 'text-gray-600' %>">
+      <svg class="h-6 w-6 <%= activeNav === 'square' ? 'text-gray-900' : 'text-gray-500' %>" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+      </svg>
+      Square
+    </a>
+    <span class="flex flex-1 flex-col items-center gap-1 py-2 text-xs font-medium text-gray-500">
+      <svg class="h-6 w-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+      </svg>
+      Star
+    </span>
+    <span class="flex flex-1 flex-col items-center gap-1 py-2 text-xs font-medium text-gray-500">
+      <svg class="h-6 w-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+      Profile
+    </span>
+  </div>
+</nav>
