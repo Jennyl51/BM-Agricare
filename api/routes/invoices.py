@@ -6,8 +6,8 @@ from pydantic import BaseModel
 from sqlalchemy import text
 from typing import Optional, List
 
-from database import get_engine
-from users import get_current_user
+from api.routes.database import get_engine
+from api.routes.users import get_current_user
 
 router = APIRouter(tags=["invoices"])
 

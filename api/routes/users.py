@@ -1,3 +1,5 @@
+import os
+
 import boto3
 
 from botocore.exceptions import ClientError
@@ -5,7 +7,6 @@ from fastapi import APIRouter, Header, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy import text
 from database import get_engine
-import os
 
 from typing import Optional
 
