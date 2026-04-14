@@ -85,10 +85,12 @@ def update_user_me(request: UpdateUserRequest, user=Depends(get_current_user)):
 def get_admin_users(user=Depends(require_admin)):
     try:
         with engine.connect() as conn:
-            result = conn.execute(text("SELECT * FROM retailers"))
-            rows = [dict(row) for row in result.mappings()]
-        return rows
-    except Exception as e:
+            result = conn.execute(
+                text("SELECT * FROM retailers"),
+            )
+        conn.commit()
+        return result
+    except ClientError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
