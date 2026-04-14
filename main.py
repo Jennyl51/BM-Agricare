@@ -4,7 +4,7 @@ from fastapi.responses import FileResponse
 from auth import router as auth_router
 from users import router as users_router
 from invoices import router as invoices_router
-from rewards import router as rewards_router
+from api.routes.rewards import router as rewards_router
 
 app = FastAPI(title="BM-Agricare API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
