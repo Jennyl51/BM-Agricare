@@ -45,7 +45,7 @@ export default function LoginScreen() {
 
       <Pressable
         style={styles.button}
-        onPress={() => router.push('/retailer-dashboard')}
+        onPress={() => router.push('/home-retailers')}
       >
         <Text style={styles.buttonText}>Enter as Retailer</Text>
       </Pressable>
