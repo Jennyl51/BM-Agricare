@@ -41,11 +41,18 @@ export default function LoginScreen() {
         autoCorrect={false}
         autoComplete="password"
       />
+      
+
       </View>
+      <Pressable
+        onPress={() => router.push('/LoginForgetPassword')}
+      >
+        <Text style={styles.linkText}>Forgot Password?</Text>
+      </Pressable>
 
       <Pressable
         style={styles.button}
-        onPress={() => router.push('/retailer-dashboard')}
+        onPress={() => router.push('/home-retailor')}
       >
         <Text style={styles.buttonText}>Enter as Retailer</Text>
       </Pressable>
@@ -63,8 +70,9 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 24,
+    justifyContent: 'flex-start',
+    paddingTop: 200,
+    paddingHorizontal: 24,
     gap: 16,
   },
   title: {
@@ -79,13 +87,19 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     backgroundColor: '#f7f8f9',
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 12,
   },
   fieldLabel: {
     fontSize: 13,
     fontWeight: '600',
     color: '#687076',
     marginBottom: 6,
+  },
+  linkText: {
+    color: '#0a7ea4',
+    textAlign: 'right',
+    fontSize: 13,
+    fontWeight: '600',
   },
   separator: {
     height: StyleSheet.hairlineWidth,
