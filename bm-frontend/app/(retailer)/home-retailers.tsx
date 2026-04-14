@@ -3,7 +3,7 @@ import { Link } from 'expo-router';
 
 export default function RetailerDashboard() {
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Home</Text>
 
     <Link href="/retailer-dashboard" asChild>
