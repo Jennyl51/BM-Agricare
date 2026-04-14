@@ -5,6 +5,7 @@ from fastapi import APIRouter, Header, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy import text
 from database import get_engine
+import os
 
 from typing import Optional
 
@@ -14,14 +15,33 @@ COGNITO_CLIENT_ID = "58u6mgvkgd913nbhm86oe7mahq"
 USER_POOL_ID = "us-east-2_8xjirMuVZ"
 REGION = "us-east-2"
 SECRET_NAME = "database-2"
-engine = get_engine(SECRET_NAME, REGION)
+# engine = get_engine(SECRET_NAME, REGION)
+DEV_MODE = os.getenv("DEV_MODE", "true").lower() == "true"
+MOCK_USER = {
+    "username": "mock_retailer",
+    "email": "mock@bm.com",
+    "user_id": "mock_user_id",
+    "user_type": "retailer",
+}
+if DEV_MODE:
+    engine = None
+    cognito = None
+else:
+    engine = get_engine(SECRET_NAME, REGION)
+    cognito = boto3.client("cognito-idp", region_name=REGION)
 
-cognito = boto3.client("cognito-idp", region_name=REGION)
+# cognito = boto3.client("cognito-idp", region_name=REGION)
 
-def get_current_user(authorization: str = Header()):
+def get_current_user(authorization: Optional[str] = Header(default=None)):
+    if DEV_MODE:
+        return MOCK_USER
+
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Missing authorization header")
+
     try:
         token = authorization.replace("Bearer ", "")
-        response = cognito.get_user(AccessToken = token)
+        response = cognito.get_user(AccessToken=token)
         attributes = {attr["Name"]: attr["Value"] for attr in response["UserAttributes"]}
         return {
             "username": response["Username"],
@@ -30,7 +50,22 @@ def get_current_user(authorization: str = Header()):
             "user_type": attributes.get("custom:user_type"),
         }
     except Exception:
-            raise HTTPException(status_code=401, detail="Invalid or expired token")
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+# def get_current_user(authorization: str = Header()):
+    
+#     try:
+#         token = authorization.replace("Bearer ", "")
+#         response = cognito.get_user(AccessToken = token)
+#         attributes = {attr["Name"]: attr["Value"] for attr in response["UserAttributes"]}
+#         return {
+#             "username": response["Username"],
+#             "email": attributes.get("email"),
+#             "user_id": attributes["sub"],
+#             "user_type": attributes.get("custom:user_type"),
+#         }
+#     except Exception:
+#             raise HTTPException(status_code=401, detail="Invalid or expired token")
 
 
 def require_admin(user=Depends(get_current_user)):
@@ -91,10 +126,12 @@ def update_user_me(request: UpdateUserRequest, user=Depends(get_current_user)):
 def get_admin_users(user=Depends(require_admin)):
     try:
         with engine.connect() as conn:
-            result = conn.execute(text("SELECT * FROM retailers"))
-            rows = [dict(row) for row in result.mappings()]
-        return rows
-    except Exception as e:
+            result = conn.execute(
+                text("SELECT * FROM retailers"),
+            )
+        conn.commit()
+        return result
+    except ClientError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
