@@ -3,12 +3,27 @@ import { Link } from 'expo-router';
 
 export default function RetailerDashboard() {
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Retailer Dashboard</Text>
       
     <Link href="/rewards-page" asChild>
     <Pressable style={styles.button}>
-      <Text style={styles.buttonText}>Go to Rewards</Text>
+      <Text style={styles.buttonText}>Go to Rewards - specific product</Text>
+    </Pressable>
+  </Link>
+  <Link href="/rewards" asChild>
+    <Pressable style={styles.button}>
+      <Text style={styles.buttonText}>Rewards</Text>
+    </Pressable>
+  </Link>
+  <Link href="/points-transaction" asChild>
+    <Pressable style={styles.button}>
+      <Text style={styles.buttonText}>Points Transaction History</Text>
+    </Pressable>
+  </Link>
+  <Link href="/home-retailers" asChild>
+    <Pressable style={styles.button}>
+      <Text style={styles.buttonText}>Home</Text>
     </Pressable>
   </Link>
 </View>
@@ -17,8 +32,10 @@ export default function RetailerDashboard() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 24,
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#f9fafb',
   },
   title: {
     fontSize: 24,
@@ -32,6 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 200,
     alignItems: 'center',
+    marginBottom: 30,
   },
   buttonText: {
     color: '#fff',
