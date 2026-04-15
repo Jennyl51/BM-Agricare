@@ -29,6 +29,9 @@ export default function RetailerDashboard() {
   <Link href="/consultation-request" asChild>
     <Pressable style={styles.button}>
       <Text style={styles.buttonText}>Consultation Request</Text>
+  <Link href="/tech_guidelines" asChild>
+    <Pressable style={styles.button}>
+      <Text style={styles.buttonText}>EXAMPLE tech guides</Text>
     </Pressable>
   </Link>
 </View>
@@ -38,6 +41,7 @@ export default function RetailerDashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
+    marginTop: 50,
     justifyContent: 'center', 
     alignItems: 'center', 
     backgroundColor: '#f9fafb',

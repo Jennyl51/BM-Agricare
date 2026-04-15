@@ -6,8 +6,8 @@ from pydantic import BaseModel
 from sqlalchemy import text
 from typing import Optional, List
 
-from database import get_engine
-from users import get_current_user
+from api.routes.database import get_engine
+from api.routes.users import get_current_user
 
 router = APIRouter(tags=["invoices"])
 
@@ -33,12 +33,12 @@ class UpdateInvoiceStatusRequest(BaseModel):
 
 def require_retailer(user=Depends(get_current_user)):
     if user.get("user_type") not in ("base", "retailer"):
-        raise HTTPException(status_code=403, detail="Retailer access required")
+        raise HTTPException(status_code=403, detail="Retailer access required - Cần quyền retailer")
     return user
 
 def require_tce_or_admin(user=Depends(get_current_user)):
     if user.get("user_type") not in ("tce", "admin"):
-        raise HTTPException(status_code=403, detail="TCE or admin access required")
+        raise HTTPException(status_code=403, detail="TCE or admin access required - Cần quyền TCE hoặc admin")
     return user
 
 
@@ -47,7 +47,7 @@ def require_tce_or_admin(user=Depends(get_current_user)):
 @router.post("/invoices")
 def create_invoice(request: CreateInvoiceRequest, user=Depends(require_retailer)):
     if not request.items:
-        raise HTTPException(status_code=400, detail="Missing required fields: items")
+        raise HTTPException(status_code=400, detail="Missing required fields: items - Vui lòng nhập các mặt hàng trong hóa đơn")
 
     invoice_id = str(uuid.uuid4())
     retailer_id = user["user_id"]
@@ -90,7 +90,7 @@ def create_invoice(request: CreateInvoiceRequest, user=Depends(require_retailer)
         raise HTTPException(status_code=503, detail=str(e))
 
     return {
-        "message": "Invoice submitted successfully",
+        "message": "Invoice submitted successfully - Hóa đơn đã được gửi thành công",
         "invoice": {
             "invoice_id": invoice_id,
             "retailer_id": retailer_id,
@@ -138,7 +138,7 @@ def list_invoices(user=Depends(get_current_user)):
                     """)
                 )
             else:
-                raise HTTPException(status_code=403, detail="Not authorized")
+                raise HTTPException(status_code=403, detail="Not authorized - Bạn không có quyền truy cập")
 
             rows = [dict(row) for row in result.mappings()]
         return rows
@@ -162,20 +162,20 @@ def get_invoice(invoice_id: str, user=Depends(get_current_user)):
             )
             invoice = result.mappings().first()
             if not invoice:
-                raise HTTPException(status_code=404, detail="Invoice not found")
+                raise HTTPException(status_code=404, detail="Invoice not found - Không kiếm được")
 
             invoice = dict(invoice)
 
             # Authorization check
             if user_type in ("base", "retailer") and invoice["retailer_id"] != user_id:
-                raise HTTPException(status_code=403, detail="Not authorized to view this invoice")
+                raise HTTPException(status_code=403, detail="Not authorized to view this invoice - Bạn không có quyền xem hóa đơn này")
             if user_type == "tce":
                 tce_check = conn.execute(
                     text("SELECT 1 FROM retailers WHERE user_id = :retailer_id AND assigned_tce_id = :tce_id"),
                     {"retailer_id": invoice["retailer_id"], "tce_id": user_id},
                 )
                 if not tce_check.first():
-                    raise HTTPException(status_code=403, detail="Not authorized to view this invoice")
+                    raise HTTPException(status_code=403, detail="Not authorized to view this invoice - Bạn không có quyền xem hóa đơn này")
 
             items_result = conn.execute(
                 text("SELECT product_id, quantity, price FROM invoice_items WHERE invoice_id = :invoice_id"),
@@ -194,9 +194,9 @@ def get_invoice(invoice_id: str, user=Depends(get_current_user)):
 @router.patch("/invoices/{invoice_id}/status")
 def update_invoice_status(invoice_id: str, request: UpdateInvoiceStatusRequest, user=Depends(require_tce_or_admin)):
     if request.submission_status not in ("approved", "rejected"):
-        raise HTTPException(status_code=400, detail="Invalid status: must be 'approved' or 'rejected'")
+        raise HTTPException(status_code=400, detail="Invalid status: must be 'approved' or 'rejected' - Trạng thái không hợp lệ: phải là 'approved' hoặc 'rejected'")
     if request.submission_status == "rejected" and not request.rejection_reason:
-        raise HTTPException(status_code=400, detail="rejection_reason is required when rejecting an invoice")
+        raise HTTPException(status_code=400, detail="rejection_reason is required when rejecting an invoice - Lý do từ chối là bắt buộc khi từ chối hóa đơn")
 
     now = datetime.now(timezone.utc).isoformat()
 
@@ -208,9 +208,9 @@ def update_invoice_status(invoice_id: str, request: UpdateInvoiceStatusRequest, 
             )
             invoice = result.mappings().first()
             if not invoice:
-                raise HTTPException(status_code=404, detail="Invoice not found")
+                raise HTTPException(status_code=404, detail="Invoice not found - Không kiếm được")
             if invoice["submission_status"] != "pending":
-                raise HTTPException(status_code=400, detail="Only pending invoices can be updated")
+                raise HTTPException(status_code=400, detail="Only pending invoices can be updated - Chỉ có thể cập nhật hóa đơn đang chờ xử lý")
 
             conn.execute(
                 text("""
@@ -237,7 +237,7 @@ def update_invoice_status(invoice_id: str, request: UpdateInvoiceStatusRequest, 
 
     if request.submission_status == "approved":
         return {
-            "message": "Invoice approved",
+            "message": "Invoice approved - Hóa đơn đã được duyệt",
             "invoice_id": invoice_id,
             "submission_status": "approved",
             "approved_by": user["user_id"],
@@ -246,7 +246,7 @@ def update_invoice_status(invoice_id: str, request: UpdateInvoiceStatusRequest, 
         }
     else:
         return {
-            "message": "Invoice rejected",
+            "message": "Invoice rejected - Hóa đơn đã bị từ chối",
             "invoice_id": invoice_id,
             "submission_status": "rejected",
             "rejection_reason": request.rejection_reason,
