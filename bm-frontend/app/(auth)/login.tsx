@@ -5,6 +5,8 @@ import {
   Pressable,
   TextInput,
   useColorScheme,
+  ImageBackground,
+  Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -13,42 +15,25 @@ import { Colors } from '@/constants/theme';
 export default function LoginScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const palette = Colors[colorScheme];
+  const brandImage = require('@/assets/images/brand_name.png');
+  const backgroundImage = require('@/assets/images/LoginBackgroundOne.png');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   return (
+    <ImageBackground
+      source={backgroundImage}
+      style={styles.background}
+      resizeMode = 'cover'
+    >
     <View style={styles.container}>
-      <View style={styles.formBox}>
-        <Text style={styles.fieldLabel}>Email</Text>
-        <TextInput
-         placeholder="Email"
-         value={email}
-         onChangeText={setEmail}
-         keyboardType="email-address"
-         autoCapitalize="none"
-         autoCorrect={false}
-         autoComplete="email"
-       />
-       <View style={styles.separator} />
-       <Text style={styles.fieldLabel}>Password</Text>
-       <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
-        autoCorrect={false}
-        autoComplete="password"
+      {/* Logo Image on the top of the screen */}
+      <Image 
+        source={brandImage} 
+        style={styles.logo} 
+        resizeMode="contain"
       />
-      
-
-      </View>
-      <Pressable
-        onPress={() => router.push('/LoginForgetPassword')}
-      >
-        <Text style={styles.linkText}>Forgot Password?</Text>
-      </Pressable>
 
       <Pressable
         style={styles.button}
@@ -64,14 +49,18 @@ export default function LoginScreen() {
         <Text style={styles.buttonText}>Enter as TCE</Text>
       </Pressable>
     </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     justifyContent: 'flex-start',
-    paddingTop: 200,
+    paddingTop: 275,
     paddingHorizontal: 24,
     gap: 16,
   },
@@ -79,6 +68,12 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '600',
     textAlign: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    width: 313 * 1.1,
+    height: 118 * 1.1,
+    alignSelf: 'center',
     marginBottom: 20,
   },
   formBox: {
@@ -108,8 +103,10 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 14,
-    borderRadius: 10,
-    backgroundColor: '#222',
+    borderRadius: 14,
+    width: '80%',
+    alignSelf: 'center',
+    backgroundColor: '#002F71',
   },
   buttonText: {
     color: 'white',
