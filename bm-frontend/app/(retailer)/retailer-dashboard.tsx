@@ -29,6 +29,8 @@ export default function RetailerDashboard() {
   <Link href="/consultation-request" asChild>
     <Pressable style={styles.button}>
       <Text style={styles.buttonText}>Consultation Request</Text>
+    </Pressable>
+  </Link>
   <Link href="/tech_guidelines" asChild>
     <Pressable style={styles.button}>
       <Text style={styles.buttonText}>EXAMPLE tech guides</Text>
