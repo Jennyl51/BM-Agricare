@@ -21,9 +21,14 @@ export default function RetailerDashboard() {
       <Text style={styles.buttonText}>Points Transaction History</Text>
     </Pressable>
   </Link>
-  <Link href="/home" asChild>
+  <Link href="/home-retailers" asChild>
     <Pressable style={styles.button}>
       <Text style={styles.buttonText}>Home</Text>
+    </Pressable>
+  </Link>
+  <Link href="/consultation-request" asChild>
+    <Pressable style={styles.button}>
+      <Text style={styles.buttonText}>Consultation Request</Text>
     </Pressable>
   </Link>
 </View>
@@ -46,7 +51,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2563eb',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 10,
+    borderRadius: 15,
     width: 200,
     alignItems: 'center',
     marginBottom: 30,

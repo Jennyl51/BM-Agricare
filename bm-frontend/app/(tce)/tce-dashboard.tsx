@@ -12,10 +12,9 @@ export default function TCEDashboard() {
       <Text style={styles.buttonText}>TCE profile</Text>
       </Pressable>
     </Link>
-
-     <Link href="/consulation-request" asChild>
+    <Link href="/consultation-requests" asChild>
       <Pressable style={styles.button}>
-      <Text style={styles.buttonText}>Consultation Request</Text>
+      <Text style={styles.buttonText}>Consultation Requests List</Text>
       </Pressable>
     </Link>
     </View>

@@ -17,7 +17,7 @@ export default function Profile() {
       </View>
       <Pressable style={styles.button}>
         <Text style={styles.buttonText}>User Settings/Edit</Text>
-      </Pressable>
+        </Pressable>
     </View>
   );
 }
@@ -70,5 +70,5 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontWeight: '600',
-  },
+},
 });

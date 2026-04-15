@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'; // Consultation Request Page
+import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native'; // Consultation Request Page
 
 export default function ConsultationRequest() {
   return (
-    <View style ={styles.container}>
+    <ScrollView style ={styles.container}>
       <Text style={styles.title}>Consultation Request</Text> 
       <View style={styles.photoUpload}>
         <Text>Photo Upload</Text>
@@ -15,7 +15,7 @@ export default function ConsultationRequest() {
       <Pressable style={styles.button}>
         <Text style={styles.buttonText}>Submit Request</Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     gap: 16,
+    backgroundColor: '#fff'
   },
   title: {
     fontSize: 24,
@@ -41,11 +42,12 @@ const styles = StyleSheet.create({
   borderColor: '#ccc',
   padding: 12,
   borderRadius: 6,
+  marginBottom: 12,
   },
   button: {
   padding: 14,
-  borderRadius: 10,
-  backgroundColor: '#222',
+  borderRadius: 15,
+  backgroundColor: '#002F71',
   },
   buttonText: {
   color: 'white',
