@@ -38,7 +38,7 @@ def get_current_user(authorization: Optional[str] = Header(default=None)):
         return MOCK_USER
 
     if not authorization:
-        raise HTTPException(status_code=401, detail="Missing authorization header")
+        raise HTTPException(status_code=401, detail="Missing authorization header - Thiếu header xác thực")
 
     try:
         token = authorization.replace("Bearer ", "")
@@ -51,7 +51,7 @@ def get_current_user(authorization: Optional[str] = Header(default=None)):
             "user_type": attributes.get("custom:user_type"),
         }
     except Exception:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
+        raise HTTPException(status_code=401, detail="Invalid or expired token - Token không hợp lệ hoặc đã hết hạn")
     
 # def get_current_user(authorization: str = Header()):
     
@@ -71,13 +71,13 @@ def get_current_user(authorization: Optional[str] = Header(default=None)):
 
 def require_admin(user=Depends(get_current_user)):
     if user.get("user_type") != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
+        raise HTTPException(status_code=403, detail="Admin access required - Cần quyền admin")
     return user
 
 
 def require_tce(user=Depends(get_current_user)):
     if user.get("user_type") != "tce":
-        raise HTTPException(status_code=403, detail="TCE access required")
+        raise HTTPException(status_code=403, detail="TCE access required - Cần quyền TCE")
     return user
 
 
@@ -91,7 +91,7 @@ def get_user_me(user=Depends(get_current_user)):
         )
         row = result.mappings().first()
         if not row:
-            raise HTTPException(status_code=404, detail="User not found in database")
+            raise HTTPException(status_code=404, detail="User not found in database - Không kiếm được")
         return dict(row)
 
 class UpdateUserRequest(BaseModel):
