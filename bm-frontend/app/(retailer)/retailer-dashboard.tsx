@@ -21,9 +21,14 @@ export default function RetailerDashboard() {
       <Text style={styles.buttonText}>Points Transaction History</Text>
     </Pressable>
   </Link>
-  <Link href="/home" asChild>
+  <Link href="/home-retailers" asChild>
     <Pressable style={styles.button}>
       <Text style={styles.buttonText}>Home</Text>
+    </Pressable>
+  </Link>
+  <Link href="/tech_guidelines" asChild>
+    <Pressable style={styles.button}>
+      <Text style={styles.buttonText}>EXAMPLE tech guides</Text>
     </Pressable>
   </Link>
 </View>
@@ -33,6 +38,7 @@ export default function RetailerDashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
+    marginTop: 50,
     justifyContent: 'center', 
     alignItems: 'center', 
     backgroundColor: '#f9fafb',
