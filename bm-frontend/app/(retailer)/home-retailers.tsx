@@ -8,13 +8,13 @@ export default function RetailerDashboard() {
       <Text>Home</Text>
 
     <Link href="/retailer-dashboard" asChild>
-    <Pressable style={styles.button}>
-    <Text style={styles.buttonText}>Retailer Dashboard</Text>
-    </Pressable>
-  </Link>
+      <Pressable style={styles.button}>
+        <Text style={styles.buttonText}>Retailer Dashboard</Text>
+      </Pressable>
+    </Link>
 
       <Navbar />
-    </View>
+      </View>
   );
 }
 const styles = StyleSheet.create({

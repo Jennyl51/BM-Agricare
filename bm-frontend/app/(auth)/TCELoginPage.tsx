@@ -23,6 +23,7 @@ export default function TCELoginPage() {
                 onChangeText={setEmail}
                 style={styles.input}
             />
+            
             <TextInput
                 placeholder="Password"
                 value={password}
