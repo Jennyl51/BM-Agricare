@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   Pressable,
-  TextInput,
   useColorScheme,
   ImageBackground,
   Image,
@@ -18,8 +17,6 @@ export default function LoginScreen() {
   const brandImage = require('@/assets/images/brand_name.png');
   const backgroundImage = require('@/assets/images/LoginBackgroundOne.png');
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   return (
     <ImageBackground
@@ -37,7 +34,7 @@ export default function LoginScreen() {
 
       <Pressable
         style={styles.button}
-        onPress={() => router.push('/home-retailers')}
+        onPress={() => router.push('retailer-dashboard')}
       >
         <Text style={styles.buttonText}>Enter as Retailer</Text>
       </Pressable>
