@@ -1,5 +1,6 @@
 import { View, Pressable, StyleSheet, Text } from 'react-native';
 import { Link } from 'expo-router';
+import Navbar from '@/components/Navbar';
 
 export default function RetailerDashboard() {
   return (
@@ -7,12 +8,13 @@ export default function RetailerDashboard() {
       <Text>Home</Text>
 
     <Link href="/retailer-dashboard" asChild>
-    <Pressable style={styles.button}>
-    <Text style={styles.buttonText}>Retailer Dashboard</Text>
-    </Pressable>
-  </Link>
-    </View>
+      <Pressable style={styles.button}>
+        <Text style={styles.buttonText}>Retailer Dashboard</Text>
+      </Pressable>
+    </Link>
 
+      <Navbar />
+      </View>
   );
 }
 const styles = StyleSheet.create({

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity, } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Pressable} from "react-native";
 import TechGuidelineGrid from "@/components/resources/TechGuidesGrid";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -24,9 +24,9 @@ const router = useRouter();
 
         
         {/* Group 2: Home Button */}
-        <TouchableOpacity onPress={() => router.push("/home-retailers")}>
+        <Pressable onPress={() => router.push("/home-retailers")}>
             <Feather name="home" size={22} color="#002F71"  />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     {/* Break pages into reusable components */}
       <TechGuidelineGrid />

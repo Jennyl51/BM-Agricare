@@ -6,12 +6,13 @@ IMPORTANT (assignment):
 - The outputs are intentionally obvious mock data for now.
 """
 
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-
+#NEED TO IMPLEMENT ACTUAL DB QUERIES HERE, THIS IS JUST MOCK DATA
 def fetch_reward_list() -> List[Dict[str, Any]]:
     return [
         {

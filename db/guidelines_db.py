@@ -1,3 +1,7 @@
+
+
+
+#NEED TO IMPLEMENT ACTUAL DB QUERIES HERE, THIS IS JUST MOCK DATA
 def fetch_guidelines_list(category, product_id, crop, topic, seasonal):
     return [
         {
