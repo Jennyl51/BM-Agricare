@@ -1,9 +1,66 @@
 from typing import List, Dict, Any
 from datetime import datetime
+from sqlalchemy import text
+from database import get_engine
+SECRET_NAME = "database-2"
+REGION = "us-east-2"
+engine = get_engine(SECRET_NAME, REGION)
 
+'''
+for create: 
+INSERT INTO [table_name] 
+(
+ all the columns that you are inserting the values 
+)
+VALUES (
+    :placeholder if value is coming from the dictionary being passed in each function
+)
+
+
+
+
+'''
 #NEED TO IMPLEMENT ACTUAL DB QUERIES HERE, THIS IS JUST MOCK DATA
 def create_consultation_request(data: Dict[str, Any]) -> Dict[str, Any]:
-    return {
+
+    # no actual consultation data yet so just a mock or test structure for creating
+    # met will always be false when consultation is first made 
+    query = """
+        INSERT INTO consultations (
+        location,
+        retailer_id,
+        tce_id,
+        retailer_request,
+        met
+    )
+    VALUES (
+        :location,
+        :retailer_id,
+        :tce_id,
+        :retailer_request
+        FALSE 
+    )
+    RETURNING
+        consultation_id,
+        location,
+        retailer_id,
+        tce_id,
+        retailer_request,
+        created_at
+
+    """
+
+    with engine.begin() as conn:
+        result = conn.execute(text(query), {
+        "location":         data["location"],
+        "retailer_id":      data["retailer_id"],
+        "tce_id":           data["tce_id"],
+        "retailer_request": data["retailer_request"],
+    })
+    row = result.mappings().first()
+    return dict(row) if row else None
+    
+    '''return {
         "consultation_id": "mock_consultation_id",
         "status": "pending",
         "created_at": datetime.now().isoformat(),
@@ -11,7 +68,8 @@ def create_consultation_request(data: Dict[str, Any]) -> Dict[str, Any]:
             "note": "THIS IS MOCK DATA",
             "input": data,
         },
-    }
+    '''
+
 
 
 def fetch_consultations_by_user(user_id: str) -> List[Dict[str, Any]]:
