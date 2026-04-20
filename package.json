@@ -12,5 +12,9 @@
     "reset-project": "npm run reset-project --prefix bm-frontend",
     "wireframe": "npm run dev --prefix bm-web",
     "wireframe:start": "npm run start --prefix bm-web"
+  },
+  "dependencies": {
+    "@react-native-community/datetimepicker": "8.6.0",
+    "expo": "^55.0.15"
   }
 }

@@ -31,6 +31,11 @@ export default function RetailerDashboard() {
       <Text style={styles.buttonText}>EXAMPLE tech guides</Text>
     </Pressable>
   </Link>
+  <Link href='InvoiceHistory' asChild>
+  <Pressable style={styles.button}>
+      <Text style={styles.buttonText}>Invoice History</Text>
+    </Pressable>
+  </Link>
 </View>
   );
 }
