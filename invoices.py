@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
 from typing import Optional, List
 
 from database import get_engine
@@ -48,6 +49,16 @@ def require_tce_or_admin(user=Depends(get_current_user)):
 def create_invoice(request: CreateInvoiceRequest, user=Depends(require_retailer)):
     if not request.items:
         raise HTTPException(status_code=400, detail="Missing required fields: items")
+    if not request.invoice_photo_url:
+        raise HTTPException(status_code=400, detail="invoice_photo_url is required")
+    if not (-90 <= request.gps_lat <= 90):
+        raise HTTPException(status_code=400, detail="Invalid gps_lat: must be between -90 and 90")
+    if not (-180 <= request.gps_lon <= 180):
+        raise HTTPException(status_code=400, detail="Invalid gps_lon: must be between -180 and 180")
+    try:
+        datetime.fromisoformat(request.invoice_timestamp)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid invoice_timestamp: must be ISO 8601 format")
 
     invoice_id = str(uuid.uuid4())
     retailer_id = user["user_id"]
@@ -86,6 +97,8 @@ def create_invoice(request: CreateInvoiceRequest, user=Depends(require_retailer)
                     },
                 )
             conn.commit()
+    except IntegrityError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid data: {e.orig}")
     except Exception as e:
         raise HTTPException(status_code=503, detail=str(e))
 
