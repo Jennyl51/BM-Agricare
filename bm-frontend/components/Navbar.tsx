@@ -1,4 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import type { Href } from "expo-router";
 import { useRouter, usePathname } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 
@@ -11,7 +12,8 @@ export default function Navbar() {
     { name: "Guides", route: "/tech_guidelines", icon: "book" },
     { name: "Upload", route: "/points-transaction", icon: "upload" },
     { name: "Rewards", route: "/rewards", icon: "gift" },
-    { name: "Users", route: "/products-retailer", icon: "users" },
+    { name: "Products", route: "/products-retailer", icon: "package" },
+    { name: "Users", route: "/users-retailers", icon: "users" },
   ];
 
   return (
@@ -23,7 +25,7 @@ export default function Navbar() {
           <Pressable
             key={tab.name}
             style={styles.tab}
-            onPress={() => router.push(tab.route)}
+            onPress={() => router.push(tab.route as Href)}
           >
             <Feather
               name={tab.icon as any}
@@ -72,7 +74,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#FFFFFF",
     marginTop: 4,
-    fontFamily: "Outfit-Regular", 
+    fontFamily: "Outfit-Regular",
   },
   activeText: {
     color: "#B3F275",
