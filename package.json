@@ -1,0 +1,20 @@
+{
+  "name": "bm-agricare",
+  "private": true,
+  "description": "Root npm scripts delegate into bm-frontend (Expo).",
+  "scripts": {
+    "start": "npm run start --prefix bm-frontend",
+    "web": "npm run web --prefix bm-frontend",
+    "android": "npm run android --prefix bm-frontend",
+    "ios": "npm run ios --prefix bm-frontend",
+    "lint": "npm run lint --prefix bm-frontend",
+    "export:web": "npm run export:web --prefix bm-frontend",
+    "reset-project": "npm run reset-project --prefix bm-frontend",
+    "wireframe": "npm run dev --prefix bm-web",
+    "wireframe:start": "npm run start --prefix bm-web"
+  },
+  "dependencies": {
+    "@react-native-community/datetimepicker": "8.6.0",
+    "expo": "^55.0.15"
+  }
+}
