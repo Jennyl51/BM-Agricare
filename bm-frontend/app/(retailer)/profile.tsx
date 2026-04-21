@@ -1,7 +1,10 @@
 import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native';
+import Navbar from '@/components/Navbar';
+
 
 export default function RetailerProfile() {
   return (
+    <View style={{flex: 1}}>
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
       <View style={styles.profilePic} />
@@ -19,6 +22,8 @@ export default function RetailerProfile() {
       <View style={styles.historyBox}>
         <Text>Points & Invoice History</Text>
       </View>
+      </View>
+              <Navbar />
     </View>
   );
 }

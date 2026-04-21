@@ -1,7 +1,9 @@
 import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native';
+import Navbar from '@/components/Navbar';
 
 export default function Profile() {
   return (
+    <View style={{flex: 1}}>
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
       <View style={styles.profilePic} />
@@ -18,6 +20,8 @@ export default function Profile() {
       <Pressable style={styles.button}>
         <Text style={styles.buttonText}>User Settings/Edit</Text>
         </Pressable>
+      </View>
+        <Navbar />
     </View>
   );
 }
@@ -70,5 +74,5 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontWeight: '600',
-},
+  },
 });

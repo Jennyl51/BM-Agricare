@@ -1,21 +1,26 @@
 import { View, Text, StyleSheet, TextInput, Pressable, ScrollView } from 'react-native'; // Consultation Request Page
+import Navbar from '@/components/Navbar';
 
 export default function ConsultationRequest() {
   return (
-    <ScrollView style ={styles.container}>
-      <Text style={styles.title}>Consultation Request</Text> 
-      <View style={styles.photoUpload}>
-        <Text>Photo Upload</Text>
-      </View>   
-      <TextInput style={styles.field} placeholder="Request Title" />
-      <TextInput style={styles.field} placeholder="Request Info/Notes" multiline numberOfLines={4} />
-      <TextInput style={styles.field} placeholder="Region" />
-      <TextInput style={styles.field} placeholder="Contact Info" />
-      <TextInput style={styles.field} placeholder="Name/User" />
-      <Pressable style={styles.button}>
-        <Text style={styles.buttonText}>Submit Request</Text>
-      </Pressable>
-    </ScrollView>
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Consultation Request</Text>
+        <View style={styles.photoUpload}>
+          <Text>Photo Upload</Text>
+        </View>
+        <TextInput style={styles.field} placeholder="Request Title" />
+        <TextInput style={styles.field} placeholder="Request Info/Notes" multiline numberOfLines={4} />
+        <TextInput style={styles.field} placeholder="Region" />
+        <TextInput style={styles.field} placeholder="Contact Info" />
+        <TextInput style={styles.field} placeholder="Name/User" />
+        <Pressable style={styles.button}>
+          <Text style={styles.buttonText}>Submit Request</Text>
+        </Pressable>
+      </ScrollView>
+      <Navbar />
+    </View>
+
   );
 }
 const styles = StyleSheet.create({
@@ -31,27 +36,27 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   photoUpload: {
-  width: '100%',
-  height: 150,
-  backgroundColor: '#ccc',
-  justifyContent: 'center',
-  alignItems: 'center',
+    width: '100%',
+    height: 150,
+    backgroundColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   field: {
-  borderWidth: 1,
-  borderColor: '#ccc',
-  padding: 12,
-  borderRadius: 6,
-  marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 12,
+    borderRadius: 6,
+    marginBottom: 12,
   },
   button: {
-  padding: 14,
-  borderRadius: 15,
-  backgroundColor: '#002F71',
+    padding: 14,
+    borderRadius: 15,
+    backgroundColor: '#002F71',
   },
   buttonText: {
-  color: 'white',
-  textAlign: 'center',
-  fontWeight: '600',
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });

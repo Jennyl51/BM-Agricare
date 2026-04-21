@@ -1,7 +1,10 @@
 import { View, Text, StyleSheet, TextInput, ScrollView } from 'react-native';
+import Navbar from '@/components/Navbar';
+
 
 export default function ConsultationRequests() {
     return (
+        <View style={{flex: 1}}>
         <ScrollView style={styles.container}>
             <Text style={styles.title}>Consultation Requests</Text>
             <TextInput style={styles.searchBar} placeholder="Search" />
@@ -44,8 +47,10 @@ export default function ConsultationRequests() {
                     <Text style={styles.cardDetail}>Date Requested</Text>
                     <Text style={styles.cardDetail}>Retailer Name</Text>
                 </View>
-            </View>
-        </ScrollView>
+                </View>
+            </ScrollView>
+            <Navbar />
+        </View>
     );
 }
 
