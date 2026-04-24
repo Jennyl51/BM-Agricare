@@ -8,76 +8,78 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const tabs = [
-    { name: "Home", route: "/home-retailers", icon: "home" },
-    { name: "Guides", route: "/tech_guidelines", icon: "book" },
-    { name: "Upload", route: "/points-transaction", icon: "upload" },
-    { name: "Rewards", route: "/rewards", icon: "gift" },
-    { name: "Products", route: "/products-retailer", icon: "package" },
-    { name: "Users", route: "/users-retailers", icon: "users" },
+    { name: "home", route: "/home-retailers", icon: "home" },
+    { name: "guides", route: "/tech_guidelines", icon: "align-left" },
+    { name: "upload", route: "/points-transaction", icon: "plus" },
+    { name: "rewards", route: "/rewards", icon: "gift" },
+    { name: "user", route: "/users-retailers", icon: "user" },
   ];
 
   return (
-    <View style={styles.nav}>
-      {tabs.map((tab) => {
-        const isActive = pathname === tab.route;
+    <View style={styles.wrapper}>
+      <View style={styles.nav}>
+        {tabs.map((tab) => {
+          const isActive = pathname === tab.route;
 
-        return (
-          <Pressable
-            key={tab.name}
-            style={styles.tab}
-            onPress={() => router.push(tab.route as Href)}
-          >
-            <Feather
-              name={tab.icon as any}
-              size={20}
-              color={isActive ? "#B3F275" : "#FFFFFF"}
-            />
-
-            <Text
-              style={[
-                styles.text,
-                isActive && styles.activeText,
-              ]}
+          return (
+            <Pressable
+              key={tab.name}
+              style={styles.tab}
+              onPress={() => router.push(tab.route as Href)}
             >
-              {tab.name}
-            </Text>
-          </Pressable>
-        );
-      })}
+              <Feather
+                name={tab.icon as any}
+                size={24}
+                color={isActive ? "#4CAF50" : "#FFFFFF"}
+              />
+              <Text style={[styles.text, isActive && styles.activeText]}>
+                {tab.name}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  nav: {
+  wrapper: {
     position: "absolute",
     bottom: 0,
-    width: "100%",
+    left: 0,
+    right: 0,
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+    backgroundColor: "transparent",
+  },
+  nav: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
     paddingVertical: 20,
     paddingHorizontal: 10,
     backgroundColor: "#002F71",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderRadius: 20,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
     elevation: 10,
   },
   tab: {
     alignItems: "center",
     justifyContent: "center",
+    flex: 1,
   },
   text: {
     fontSize: 12,
     color: "#FFFFFF",
-    marginTop: 4,
+    marginTop: 6,
     fontFamily: "Outfit-Regular",
   },
   activeText: {
-    color: "#B3F275",
+    color: "#4CAF50",
     fontFamily: "Outfit-SemiBold",
   },
 });
