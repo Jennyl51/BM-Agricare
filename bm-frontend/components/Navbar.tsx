@@ -16,8 +16,7 @@ export default function Navbar() {
   ];
 
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.nav}>
+    <View style={styles.nav}>
         {tabs.map((tab) => {
           const isActive = pathname === tab.route;
 
@@ -38,32 +37,27 @@ export default function Navbar() {
             </Pressable>
           );
         })}
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  nav: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 16,
-    paddingBottom: 24,
-    backgroundColor: "transparent",
-  },
-  nav: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
     paddingVertical: 20,
     paddingHorizontal: 10,
     backgroundColor: "#002F71",
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     shadowColor: "#000",
     shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: -4 },
     shadowRadius: 12,
     elevation: 10,
   },
