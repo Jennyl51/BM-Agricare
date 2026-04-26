@@ -10,7 +10,7 @@ export default function ConsultationRequests() {
             <TextInput style={styles.searchBar} placeholder="Search" />
             <View style={styles.filterRow}>
                 <View style={styles.regionButton}>
-                    <Text>Region ▼</Text>
+                    <Text style={styles.regionText}>Region ▼</Text>
                 </View>
                 <Text style={styles.filterText}>Filter ≡</Text>
             </View>
@@ -58,20 +58,24 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 24,
+        paddingTop: 50,
         backgroundColor: '#ffffff',
     },
     title: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: '700',
         textAlign: 'center',
         color: '#002F71',
     },
     searchBar: {
         borderWidth: 1,
-        borderColor: '#fff',
+        borderColor: '#002F71',
         borderRadius: 15,
-        padding: 10,
-        marginBottom: 10,
+        padding: 15,
+        paddingTop: 10,
+        marginBottom: 15,
+        marginTop: 15,
+        color: '#002F71'
     },
     filterRow: {
         flexDirection: 'row',
@@ -86,18 +90,23 @@ const styles = StyleSheet.create({
         padding: 8,
         paddingHorizontal: 12,
     },
+    regionText: {
+        fontSize: 18,
+        color: '#002F71'
+    },  
     filterText: {
         color: '#002F71',
         fontWeight: '600',
+        fontSize: 18,
     },
     card: {
         flexDirection: 'row',
-        gap: 12,
-        marginBottom: 16,
+        gap: 16,
+        marginBottom: 24,
     },
     cardPhoto: {
-        width: 80,
-        height: 80,
+        width: 110,
+        height: 110,
         backgroundColor: '#ccc',
         borderRadius: 8,
     },
@@ -115,14 +124,15 @@ const styles = StyleSheet.create({
     statusText: {
         color: 'white',
         fontWeight: '600',
-        fontSize: 12,
+        fontSize: 18,
     },
     cardTitle: {
         fontWeight: '600',
         color: '#002F71',
+        fontSize: 20,
     },
     cardDetail: {
         color: '#7F7F7F',
-        fontSize: 12,
+        fontSize: 16,
     },
 });

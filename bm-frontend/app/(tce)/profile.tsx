@@ -7,6 +7,9 @@ export default function Profile() {
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
       <View style={styles.profilePic} />
+        <Pressable style={styles.uploadButton}>
+          <Text style={styles.uploadText}>Upload Photo</Text>   
+        </Pressable> 
       <TextInput style={styles.field} placeholder="Name/User"/>
       <TextInput style={styles.field} placeholder="Region"/>
       <TextInput style={styles.field} placeholder="Email"/>
@@ -33,16 +36,18 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '600',
+    paddingTop: 15,
+    fontSize: 30,
+    fontWeight: '700',
     textAlign: 'center',
+    color: 'white,'
   },
   profilePic: {
-    width: 100,
-    height: 100,
+    width: 140,
+    height: 140,
     backgroundColor: '#ccc',
     alignSelf: 'center',
-    borderRadius: 8,
+    borderRadius: 70,
   },
   field: {
     borderWidth: 1, 
@@ -66,13 +71,27 @@ const styles = StyleSheet.create({
     borderColor: '#ccc', 
   },
   button: {
-    padding: 14,
-    borderRadius: 10,
-    backgroundColor: '#222',
+    padding: 10,
+    borderRadius: 15,
+    backgroundColor: '#68BC45',
+    alignSelf: 'center',
+    paddingHorizontal: 30, 
   },
   buttonText: {
     color: 'white',
     textAlign: 'center',
     fontWeight: '600',
+    fontSize: 16,
   },
+  uploadButton: {
+  backgroundColor: '#68BC45',
+  padding: 10,
+  borderRadius: 15,
+  alignSelf: 'center',
+  },
+  uploadText: {
+  color: 'white',
+  fontWeight: '600',
+  fontSize: 16
+},
 });
