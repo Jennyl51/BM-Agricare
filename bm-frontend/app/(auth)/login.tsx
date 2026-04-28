@@ -34,14 +34,14 @@ export default function LoginScreen() {
 
       <Pressable
         style={styles.button}
-        onPress={() => router.push('retailer-dashboard')}
+        onPress={() => router.push('/RetailerLoginPage')}
       >
         <Text style={styles.buttonText}>Enter as Retailer</Text>
       </Pressable>
 
       <Pressable
         style={styles.button}
-        onPress={() => router.push('/tce-dashboard')}
+        onPress={() => router.push('/TCELoginPage')}
       >
         <Text style={styles.buttonText}>Enter as TCE</Text>
       </Pressable>
