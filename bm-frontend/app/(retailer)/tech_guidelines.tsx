@@ -1,23 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import Navbar from '@/components/Navbar';
 import { getGuidelinesList } from '@/services/guidelinesApi';
 import { BM } from '@/constants/theme';
-import { BackgroundBlobs, BounceButton, EmptyState, FadeIn } from '@/components/AgricareUI';
+import { BackgroundBlobs, BounceButton, EmptyState, FadeIn, InsetOverlay } from '@/components/AgricareUI';
 import { useApp } from '@/components/AppContext';
-
 type Guide = { guideline_id?: string | number; title: string; category?: string; body?: string; thumbnail_url?: string; hotlink?: string };
 const categories = ['All', 'News', 'Articles', 'Products'];
-
 export default function TechGuidelinesScreen() {
   const { theme } = useApp();
   const [guides, setGuides] = useState<Guide[]>([]);
   const [active, setActive] = useState('All');
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<Guide | null>(null);
-
   useEffect(() => { getGuidelinesList().then((data) => Array.isArray(data) && setGuides(data)).catch(() => setGuides([])); }, []);
   const filtered = useMemo(() => guides.filter((g) => {
     const matchesCat = active === 'All' || (g.category || '').toLowerCase().includes(active.toLowerCase());
@@ -25,13 +22,12 @@ export default function TechGuidelinesScreen() {
     const matchesQuery = !q || g.title.toLowerCase().includes(q) || (g.body || '').toLowerCase().includes(q);
     return matchesCat && matchesQuery;
   }), [guides, active, query]);
-
   return (
-    <View style={[styles.container, { backgroundColor: theme.bg }]}> 
+    <View style={[styles.container, { backgroundColor: theme.bg }]}>
       <BackgroundBlobs />
       <View style={styles.greenHeader}><Text style={styles.headerText}>LOOK FOR GUIDES</Text><Text style={styles.headerSub}>Real app guides from the /guidelines API</Text></View>
       <View style={styles.searchRow}>
-        <View style={[styles.searchBox, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+        <View style={[styles.searchBox, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <TextInput placeholder="Search" placeholderTextColor="#91A189" value={query} onChangeText={setQuery} style={[styles.searchInput, { color: theme.text }]} />
           <Feather name="search" size={20} color={BM.green} />
         </View>
@@ -49,20 +45,47 @@ export default function TechGuidelinesScreen() {
           </FadeIn>
         ))}
       </ScrollView>
-      <Modal visible={!!selected} transparent animationType="fade" onRequestClose={() => setSelected(null)}>
-        <View style={styles.modalBackdrop}>
-          <View style={[styles.modalCard, { backgroundColor: theme.card }]}> 
-            <View style={styles.modalHeader}><Text style={[styles.modalTitle, { color: theme.text }]}>{selected?.title}</Text><Pressable onPress={() => setSelected(null)}><Feather name="x" size={23} color={theme.text} /></Pressable></View>
-            <Text style={[styles.modalBody, { color: theme.muted }]}>{selected?.body}</Text>
-            <BounceButton style={styles.modalAction} onPress={() => { const link = selected?.hotlink || '/products-retailer'; setSelected(null); router.push(link as any); }}><Text style={styles.modalActionText}>Open related page →</Text></BounceButton>
-          </View>
-        </View>
-      </Modal>
+      <InsetOverlay visible={!!selected} onClose={() => setSelected(null)} align="bottom">
+  <View style={[styles.mobileGuideSheet, { backgroundColor: theme.card }]}>
+    <View style={styles.sheetHandle} />
+    <View style={styles.modalHeader}>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.guideLabel}>{selected?.category || 'Guide'}</Text>
+        <Text style={[styles.modalTitle, { color: theme.text }]}>{selected?.title}</Text>
+      </View>
+      <Pressable onPress={() => setSelected(null)} style={styles.closeButton}>
+        <Feather name="x" size={22} color={theme.text} />
+      </Pressable>
+    </View>
+    <ScrollView style={styles.guideBodyScroll} showsVerticalScrollIndicator={false}>
+      <Image
+        source={{
+          uri:
+            selected?.thumbnail_url ||
+            'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=80',
+        }}
+        style={styles.modalImage}
+      />
+      <Text style={[styles.modalBody, { color: theme.muted }]}>
+        {selected?.body || 'No guide description available yet.'}
+      </Text>
+    </ScrollView>
+    <BounceButton
+      style={styles.modalAction}
+      onPress={() => {
+        const link = selected?.hotlink || '/products-retailer';
+        setSelected(null);
+        router.push(link as any);
+      }}
+    >
+      <Text style={styles.modalActionText}>Open related page →</Text>
+    </BounceButton>
+  </View>
+</InsetOverlay>
       <Navbar />
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: { flex: 1 },
   greenHeader: { height: 124, backgroundColor: '#8DB955', borderBottomLeftRadius: 56, borderBottomRightRadius: 56, alignItems: 'center', justifyContent: 'center', paddingTop: 32, shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 7 }, shadowRadius: 14 },
@@ -83,11 +106,74 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 10.5, fontWeight: '900', lineHeight: 15, paddingHorizontal: 10, paddingTop: 10, minHeight: 58 },
   tag: { alignSelf: 'flex-start', marginLeft: 10, marginTop: 4, backgroundColor: '#BEE8EA', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 },
   tagText: { color: '#14606B', fontSize: 9, fontWeight: '900' },
-  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.42)', alignItems: 'center', justifyContent: 'center', padding: 24 },
-  modalCard: { borderRadius: 26, padding: 22, width: '100%' },
+  mobileGuideSheet: {
+  width: '100%',
+  maxHeight: 560,
+  borderRadius: 28,
+  padding: 18,
+  shadowColor: '#000',
+  shadowOpacity: 0.18,
+  shadowOffset: { width: 0, height: 10 },
+  shadowRadius: 22,
+  elevation: 10,
+},
+sheetHandle: {
+  width: 46,
+  height: 5,
+  borderRadius: 999,
+  backgroundColor: '#CBD5E1',
+  alignSelf: 'center',
+  marginBottom: 14,
+},
+closeButton: {
+  width: 38,
+  height: 38,
+  borderRadius: 19,
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: 'rgba(148,163,184,0.16)',
+},
+guideLabel: {
+  color: BM.green,
+  fontSize: 11,
+  fontWeight: '900',
+  textTransform: 'uppercase',
+  marginBottom: 4,
+},
+guideBodyScroll: {
+  maxHeight: 330,
+  marginTop: 10,
+},
+modalImage: {
+  width: '100%',
+  height: 150,
+  borderRadius: 20,
+  marginBottom: 14,
+  backgroundColor: '#D9EAC9',
+},
+modalTitle: {
+  flex: 1,
+  fontSize: 19,
+  fontWeight: '900',
+  lineHeight: 24,
+},
+modalBody: {
+  lineHeight: 21,
+  fontWeight: '700',
+  fontSize: 13,
+},
+modalAction: {
+  backgroundColor: BM.deepBlue,
+  borderRadius: 18,
+  paddingVertical: 15,
+  paddingHorizontal: 18,
+  marginTop: 16,
+  alignItems: 'center',
+},
+modalActionText: {
+  color: '#fff',
+  fontWeight: '900',
+  fontSize: 14,
+},
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', gap: 10, alignItems: 'flex-start' },
-  modalTitle: { flex: 1, fontSize: 20, fontWeight: '900', marginBottom: 10 },
-  modalBody: { lineHeight: 21, fontWeight: '700' },
-  modalAction: { backgroundColor: BM.deepBlue, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 18, marginTop: 18, alignItems: 'center' },
-  modalActionText: { color: '#fff', fontWeight: '900' },
 });
