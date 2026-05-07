@@ -6,6 +6,7 @@ from api.routes.users import router as users_router
 from api.routes.invoices import router as invoices_router
 from api.routes.rewards import router as rewards_router
 from api.routes.guidelines import router as guidelines_router
+from api.routes.products import router as products_router
 
 app = FastAPI(title="BM-Agricare API")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -14,6 +15,7 @@ app.include_router(users_router)
 app.include_router(invoices_router)
 app.include_router(rewards_router)
 app.include_router(guidelines_router)
+app.include_router(products_router)
 
 
 @app.get("/")

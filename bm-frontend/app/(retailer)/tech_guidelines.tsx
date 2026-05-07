@@ -1,69 +1,93 @@
-import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Pressable} from "react-native";
-import TechGuidelineGrid from "@/components/resources/TechGuidesGrid";
-import { Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import Navbar from "@/components/Navbar";
+import React, { useEffect, useMemo, useState } from 'react';
+import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { router } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
+import Navbar from '@/components/Navbar';
+import { getGuidelinesList } from '@/services/guidelinesApi';
+import { BM } from '@/constants/theme';
+import { BackgroundBlobs, BounceButton, EmptyState, FadeIn } from '@/components/AgricareUI';
+import { useApp } from '@/components/AppContext';
+
+type Guide = { guideline_id?: string | number; title: string; category?: string; body?: string; thumbnail_url?: string; hotlink?: string };
+const categories = ['All', 'News', 'Articles', 'Products'];
 
 export default function TechGuidelinesScreen() {
-const router = useRouter();
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        {/* Imagine View as Grouping Feature in Figma 
-        So when you are using flex box and auto layout,
-        it is applied to groups
-        */}
-        {/* Group 1: Title & Subtitle */}
-        <View> 
-            <Text style={styles.title}>Tech Guidelines</Text>
-            <Text style={styles.subtitle}>
-            Example resource page for frontend members
-            </Text>
-        </View>
+  const { theme } = useApp();
+  const [guides, setGuides] = useState<Guide[]>([]);
+  const [active, setActive] = useState('All');
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState<Guide | null>(null);
 
-        
-        {/* Group 2: Home Button */}
-        <Pressable onPress={() => router.push("/home-retailers")}>
-            <Feather name="home" size={22} color="#002F71"  />
-        </Pressable>
+  useEffect(() => { getGuidelinesList().then((data) => Array.isArray(data) && setGuides(data)).catch(() => setGuides([])); }, []);
+  const filtered = useMemo(() => guides.filter((g) => {
+    const matchesCat = active === 'All' || (g.category || '').toLowerCase().includes(active.toLowerCase());
+    const q = query.toLowerCase();
+    const matchesQuery = !q || g.title.toLowerCase().includes(q) || (g.body || '').toLowerCase().includes(q);
+    return matchesCat && matchesQuery;
+  }), [guides, active, query]);
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.bg }]}> 
+      <BackgroundBlobs />
+      <View style={styles.greenHeader}><Text style={styles.headerText}>LOOK FOR GUIDES</Text><Text style={styles.headerSub}>Real app guides from the /guidelines API</Text></View>
+      <View style={styles.searchRow}>
+        <View style={[styles.searchBox, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+          <TextInput placeholder="Search" placeholderTextColor="#91A189" value={query} onChangeText={setQuery} style={[styles.searchInput, { color: theme.text }]} />
+          <Feather name="search" size={20} color={BM.green} />
+        </View>
+        <BounceButton style={styles.filterButton}><Feather name="sliders" size={20} color="#FFFFFF" /></BounceButton>
       </View>
-    {/* Break pages into reusable components */}
-      <TechGuidelineGrid />
-    <Navbar />
+      <View style={styles.categoryRow}>{categories.map((cat) => <Pressable key={cat} onPress={() => setActive(cat)} style={[styles.chip, active === cat && styles.chipActive]}><Text style={[styles.chipText, active === cat && { color: '#fff' }]}>{cat}</Text></Pressable>)}</View>
+      <ScrollView contentContainerStyle={styles.grid} showsVerticalScrollIndicator={false}>
+        {filtered.length === 0 ? <View style={{ width: '100%' }}><EmptyState title="No guides found" subtitle="Try a different category or search term." /></View> : filtered.map((guide, i) => (
+          <FadeIn key={`${guide.guideline_id || guide.title}`} delay={60 + i * 45} style={styles.cardWrap}>
+            <Pressable style={[styles.guideCard, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => setSelected(guide)}>
+              <Image source={{ uri: guide.thumbnail_url || 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=80' }} style={styles.cardImage} />
+              <Text numberOfLines={3} style={[styles.cardTitle, { color: theme.text }]}>{guide.title}</Text>
+              <View style={styles.tag}><Text style={styles.tagText}>{guide.category || 'Guide'}</Text></View>
+            </Pressable>
+          </FadeIn>
+        ))}
+      </ScrollView>
+      <Modal visible={!!selected} transparent animationType="fade" onRequestClose={() => setSelected(null)}>
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.modalCard, { backgroundColor: theme.card }]}> 
+            <View style={styles.modalHeader}><Text style={[styles.modalTitle, { color: theme.text }]}>{selected?.title}</Text><Pressable onPress={() => setSelected(null)}><Feather name="x" size={23} color={theme.text} /></Pressable></View>
+            <Text style={[styles.modalBody, { color: theme.muted }]}>{selected?.body}</Text>
+            <BounceButton style={styles.modalAction} onPress={() => { const link = selected?.hotlink || '/products-retailer'; setSelected(null); router.push(link as any); }}><Text style={styles.modalActionText}>Open related page →</Text></BounceButton>
+          </View>
+        </View>
+      </Modal>
+      <Navbar />
     </View>
-    
   );
 }
 
-// COMMON BM STYLES:
-// Colors: #002F71 (dark blue), #68BC45 (light green), #7F7F7F (light grey), #0A0908 (dark gray), #FFFFFF (white)
-// Fonts: Montserrat (Heading, Title, Subtitle), Outfit (Body text, descriptions), DM sans (Light, small text)
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#D9EAC9",
-  },
-  header: {
-    paddingTop: 16,
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-    marginTop: 40,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
-  title: {
-    color: "#002F71",
-    fontSize: 26,
-    fontWeight: "800",
-    fontFamily: "Montserrat",
-    marginBottom: 4,
-  },
-  subtitle: {
-    color: "#4B6358",
-    fontFamily: "Montserrat-Regular",
-    fontSize: 14,
-  },
+  container: { flex: 1 },
+  greenHeader: { height: 124, backgroundColor: '#8DB955', borderBottomLeftRadius: 56, borderBottomRightRadius: 56, alignItems: 'center', justifyContent: 'center', paddingTop: 32, shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 7 }, shadowRadius: 14 },
+  headerText: { color: '#FFFFFF', fontSize: 21, fontWeight: '900', letterSpacing: 0.8 },
+  headerSub: { color: '#F8FFF1', fontWeight: '800', fontSize: 10, marginTop: 5 },
+  searchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 24, marginTop: 16 },
+  searchBox: { flex: 1, height: 46, borderRadius: 17, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 1, shadowColor: '#000', shadowOpacity: 0.08, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 3 },
+  searchInput: { flex: 1, fontSize: 13, fontWeight: '800' },
+  filterButton: { width: 46, height: 46, borderRadius: 23, backgroundColor: BM.deepBlue, alignItems: 'center', justifyContent: 'center' },
+  categoryRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 24, marginTop: 14, flexWrap: 'wrap' },
+  chip: { minWidth: 64, paddingVertical: 8, paddingHorizontal: 14, borderRadius: 999, backgroundColor: '#BEE8EA', alignItems: 'center' },
+  chipActive: { backgroundColor: BM.deepBlue },
+  chipText: { color: BM.deepBlue, fontSize: 11, fontWeight: '900' },
+  grid: { paddingHorizontal: 24, paddingTop: 18, paddingBottom: 126, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 14 },
+  cardWrap: { width: '48%' },
+  guideCard: { borderRadius: 17, overflow: 'hidden', minHeight: 184, borderWidth: 1, shadowColor: '#000', shadowOpacity: 0.08, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 3 },
+  cardImage: { width: '100%', height: 82, backgroundColor: '#D9EAC9' },
+  cardTitle: { fontSize: 10.5, fontWeight: '900', lineHeight: 15, paddingHorizontal: 10, paddingTop: 10, minHeight: 58 },
+  tag: { alignSelf: 'flex-start', marginLeft: 10, marginTop: 4, backgroundColor: '#BEE8EA', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 },
+  tagText: { color: '#14606B', fontSize: 9, fontWeight: '900' },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.42)', alignItems: 'center', justifyContent: 'center', padding: 24 },
+  modalCard: { borderRadius: 26, padding: 22, width: '100%' },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', gap: 10, alignItems: 'flex-start' },
+  modalTitle: { flex: 1, fontSize: 20, fontWeight: '900', marginBottom: 10 },
+  modalBody: { lineHeight: 21, fontWeight: '700' },
+  modalAction: { backgroundColor: BM.deepBlue, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 18, marginTop: 18, alignItems: 'center' },
+  modalActionText: { color: '#fff', fontWeight: '900' },
 });

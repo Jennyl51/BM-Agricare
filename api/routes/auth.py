@@ -1,3 +1,4 @@
+import os
 import boto3
 
 from enum import Enum
@@ -25,10 +26,14 @@ COGNITO_CLIENT_ID = "58u6mgvkgd913nbhm86oe7mahq"
 USER_POOL_ID = "us-east-2_8xjirMuVZ"
 REGION = "us-east-2"
 
-cognito = boto3.client("cognito-idp", region_name=REGION)
-
+DEV_MODE = os.getenv("DEV_MODE", "true").lower() == "true"
 SECRET_NAME = "database-2"
-engine = get_engine(SECRET_NAME, REGION)
+if DEV_MODE:
+    cognito = None
+    engine = None
+else:
+    cognito = boto3.client("cognito-idp", region_name=REGION)
+    engine = get_engine(SECRET_NAME, REGION)
 
 
 class UserType(str, Enum):
@@ -51,6 +56,8 @@ class LoginRequest(BaseModel):
 
 @router.post("/login")
 def login(request: LoginRequest):
+    if DEV_MODE:
+        return {"access_token": "local-demo-token", "id_token": "local-demo-id", "refresh_token": "local-demo-refresh"}
     try:
         response = cognito.initiate_auth(
             ClientId=COGNITO_CLIENT_ID,
@@ -76,6 +83,8 @@ def login(request: LoginRequest):
 
 @router.post("/signup")
 def signup(request: SignupRequest):
+    if DEV_MODE:
+        return {"message": f"Local demo user created: {request.username}"}
     try:
         response = cognito.sign_up(
             ClientId=COGNITO_CLIENT_ID,

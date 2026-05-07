@@ -6,7 +6,7 @@ from botocore.exceptions import ClientError
 from fastapi import APIRouter, Header, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy import text
-from database import get_engine
+from api.routes.database import get_engine
 
 from typing import Optional
 
@@ -84,6 +84,19 @@ def require_tce(user=Depends(get_current_user)):
 # GET /users/me - get current user's profile
 @router.get("/users/me")
 def get_user_me(user=Depends(get_current_user)):
+    if DEV_MODE or engine is None:
+        return {
+            "user_id": user["user_id"],
+            "username": user["username"],
+            "name": "Tin Bao Tran",
+            "email": user.get("email"),
+            "phone_number": "+84 000 000 000",
+            "region": "Tin Berry Farm | Mekong Delta",
+            "tier": "Gold",
+            "total_points": 7809,
+            "pending_invoices": 2,
+            "completed_invoices": 8,
+        }
     with engine.connect() as conn:
         result = conn.execute(
             text("SELECT * FROM retailers WHERE user_id = :user_id"),

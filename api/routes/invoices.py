@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from datetime import datetime, timezone
@@ -13,7 +14,8 @@ router = APIRouter(tags=["invoices"])
 
 REGION = "us-east-2"
 SECRET_NAME = "database-2"
-engine = get_engine(SECRET_NAME, REGION)
+DEV_MODE = os.getenv("DEV_MODE", "true").lower() == "true"
+engine = None if DEV_MODE else get_engine(SECRET_NAME, REGION)
 
 class InvoiceItem(BaseModel):
     product_id: str
@@ -48,6 +50,15 @@ def require_tce_or_admin(user=Depends(get_current_user)):
 def create_invoice(request: CreateInvoiceRequest, user=Depends(require_retailer)):
     if not request.items:
         raise HTTPException(status_code=400, detail="Missing required fields: items - Vui lòng nhập các mặt hàng trong hóa đơn")
+
+    if DEV_MODE or engine is None:
+        return {
+            "invoice_id": str(uuid.uuid4()),
+            "status": "pending",
+            "submission_status": "pending",
+            "points_awarded": sum(item.quantity * 10 for item in request.items),
+            "message": "Local demo invoice accepted",
+        }
 
     invoice_id = str(uuid.uuid4())
     retailer_id = user["user_id"]
@@ -105,6 +116,12 @@ def create_invoice(request: CreateInvoiceRequest, user=Depends(require_retailer)
 # GET /invoices - list invoices (own for retailers, region for TCEs, all for admins)
 @router.get("/invoices")
 def list_invoices(user=Depends(get_current_user)):
+    if DEV_MODE or engine is None:
+        return [
+            {"invoice_id": "inv-1001", "invoice_timestamp": "2026-03-16T16:23:00Z", "submission_status": "in_process", "points_awarded": 560},
+            {"invoice_id": "inv-1002", "invoice_timestamp": "2026-03-13T09:10:00Z", "submission_status": "in_process", "points_awarded": 420},
+            {"invoice_id": "inv-1003", "invoice_timestamp": "2026-03-10T13:02:00Z", "submission_status": "completed", "points_awarded": 780},
+        ]
     user_type = user.get("user_type")
     user_id = user["user_id"]
 
@@ -151,6 +168,18 @@ def list_invoices(user=Depends(get_current_user)):
 # GET /invoices/:id - get details of a specific invoice
 @router.get("/invoices/{invoice_id}")
 def get_invoice(invoice_id: str, user=Depends(get_current_user)):
+    if DEV_MODE or engine is None:
+        return {
+            "invoice_id": invoice_id,
+            "retailer_id": user["user_id"],
+            "invoice_photo_url": "local-demo.pdf",
+            "submission_status": "pending",
+            "points_awarded": 560,
+            "items": [
+                {"product_id": "esta-kieserite", "quantity": 50, "price": 120},
+                {"product_id": "nitrophoska", "quantity": 25, "price": 100},
+            ],
+        }
     user_type = user.get("user_type")
     user_id = user["user_id"]
 
