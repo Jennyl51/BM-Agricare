@@ -43,6 +43,15 @@ def points_history_get(user=Depends(get_current_user)):
     return get_points_history_for_user(user["user_id"])
 
 
+@router.get("/points/summary")
+def points_summary_get(user=Depends(get_current_user)):
+    history = get_points_history_for_user(user["user_id"])
+    earned = sum(row.get("points_earned", 0) for row in history)
+    redeemed = sum(row.get("points_redeemed", 0) for row in history)
+    total = max(7809, earned - redeemed)
+    return {"total_points": total, "tier": "Gold", "next_tier_points": 1090}
+
+
 class RedeemItemIn(BaseModel):
     reward_id: str
     quantity: int = Field(ge=1)

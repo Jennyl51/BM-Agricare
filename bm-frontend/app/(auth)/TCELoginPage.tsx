@@ -1,129 +1,72 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ImageBackground,
-  Image,
-  TextInput,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ImageBackground, Image, TextInput, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { login } from '@/services/authApi';
+import { login, signup } from '@/services/authApi';
+import { BM } from '@/constants/theme';
+import { BackgroundBlobs, BounceButton, FadeIn } from '@/components/AgricareUI';
+import { useApp } from '@/components/AppContext';
 
 export default function TCELoginPage() {
   const backgroundImage = require('@/assets/images/LoginBackgroundOne.png');
   const brandImage = require('@/assets/images/brand_name.png');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const { theme, darkMode } = useApp();
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [username, setUsername] = useState('tce@demo.com');
+  const [password, setPassword] = useState('password');
+  const [name, setName] = useState('TCE Admin');
+  const [phone, setPhone] = useState('+84 000 000');
   const [submitting, setSubmitting] = useState(false);
 
-  const handleLogin = async () => {
-    if (!username || !password) {
-      Alert.alert('Missing info', 'Enter username and password.');
+  const handleSubmit = async () => {
+    if (!username || !password || (mode === 'signup' && !name)) {
+      Alert.alert('Missing information', 'Please enter the required account information.');
       return;
     }
     setSubmitting(true);
     try {
-      await login(username, password);
+      if (mode === 'signup') await signup({ username, password, name, email: username, phone_number: phone, user_type: 'tce' });
+      else await login(username, password);
       router.replace('/tce-dashboard');
     } catch (err: any) {
-      Alert.alert('Login failed', err?.message ?? 'Unknown error');
+      Alert.alert('Login issue', err?.message || 'Please check backend connection or use the demo account.');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <ImageBackground
-      source={backgroundImage}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={backgroundImage} style={[styles.background, { backgroundColor: theme.bg }]} resizeMode="cover">
+      <BackgroundBlobs />
       <View style={styles.container}>
-        <Image source={brandImage} style={styles.logo} resizeMode="contain" />
-
-        <TextInput
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
-          autoCapitalize="none"
-          style={styles.input}
-        />
-
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
-        />
-
-        <Pressable
-          style={[styles.button, submitting && styles.buttonDisabled]}
-          onPress={handleLogin}
-          disabled={submitting}
-        >
-          <Text style={styles.buttonText}>
-            {submitting ? 'Signing in...' : 'Login'}
-          </Text>
-        </Pressable>
-
-        <Pressable onPress={() => router.push('/LoginForgetPassword')}>
-          <Text style={styles.linkText}>Forgot password?</Text>
-        </Pressable>
+        <FadeIn delay={80} style={[styles.card, { backgroundColor: darkMode ? 'rgba(16,38,23,0.92)' : 'rgba(255,255,255,0.84)' }]}> 
+          <Image source={brandImage} style={styles.logo} resizeMode="contain" />
+          <Text style={[styles.title, { color: theme.text }]}>{mode === 'login' ? 'TCE Login' : 'TCE Sign Up'}</Text>
+          <Text style={[styles.subtitle, { color: theme.muted }]}>Demo account: tce@demo.com / password</Text>
+          {mode === 'signup' ? <TextInput placeholder="Name" placeholderTextColor="#8EA08B" value={name} onChangeText={setName} style={styles.input} /> : null}
+          <TextInput placeholder="Email / Username" placeholderTextColor="#8EA08B" value={username} onChangeText={setUsername} autoCapitalize="none" style={styles.input} />
+          {mode === 'signup' ? <TextInput placeholder="Phone number" placeholderTextColor="#8EA08B" value={phone} onChangeText={setPhone} style={styles.input} /> : null}
+          <TextInput placeholder="Password" placeholderTextColor="#8EA08B" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
+          <BounceButton style={styles.button} onPress={handleSubmit} disabled={submitting}>
+            <Text style={styles.buttonText}>{submitting ? 'Opening...' : mode === 'login' ? 'Login to TCE App' : 'Create TCE Account'}</Text>
+          </BounceButton>
+          <Pressable onPress={() => setMode(mode === 'login' ? 'signup' : 'login')}>
+            <Text style={styles.linkText}>{mode === 'login' ? 'Need an account? Sign up' : 'Already have an account? Login'}</Text>
+          </Pressable>
+        </FadeIn>
       </View>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    gap: 12,
-  },
-  logo: {
-    width: 313 * 1.1,
-    height: 118 * 1.1,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  input: {
-    width: '80%',
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#e2e5e8',
-    borderRadius: 14,
-    backgroundColor: 'white',
-    fontSize: 16,
-  },
-  button: {
-    padding: 14,
-    borderRadius: 14,
-    width: '80%',
-    alignSelf: 'center',
-    backgroundColor: '#002F71',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  linkText: {
-    color: '#0a7ea4',
-    fontSize: 13,
-    fontWeight: '600',
-    marginTop: 4,
-  },
+  background: { flex: 1 },
+  container: { flex: 1, justifyContent: 'center', paddingHorizontal: 28 },
+  card: { borderRadius: 30, padding: 22, gap: 12, shadowColor: '#000', shadowOpacity: 0.18, shadowOffset: { width: 0, height: 10 }, shadowRadius: 22, elevation: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.65)' },
+  logo: { width: 220, height: 82, alignSelf: 'center' },
+  title: { textAlign: 'center', fontSize: 26, fontWeight: '900' },
+  subtitle: { textAlign: 'center', fontSize: 12, fontWeight: '700', marginBottom: 8 },
+  input: { width: '100%', padding: 14, borderWidth: 1, borderColor: '#dbe7d5', borderRadius: 15, backgroundColor: 'white', fontSize: 15, fontWeight: '700', color: '#0A0908' },
+  button: { padding: 16, borderRadius: 16, backgroundColor: BM.deepBlue, marginTop: 6 },
+  buttonText: { color: 'white', textAlign: 'center', fontWeight: '900' },
+  linkText: { color: BM.deepBlue, fontSize: 12, fontWeight: '900', textAlign: 'center', marginTop: 2 },
 });

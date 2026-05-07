@@ -7,7 +7,7 @@ from services.guidelines_services import (
     update_guideline,
     create_news_item,
 )
-from auth import get_current_user
+from api.routes.users import get_current_user
 
 router = APIRouter()
 

@@ -1,53 +1,50 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-import { Platform } from 'react-native';
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
-export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
+export const BM = {
+  blue: '#002F71',
+  deepBlue: '#002F71',
+  green: '#68BC45',
+  grey: '#7F7F7F',
+  black: '#0A0908',
+  white: '#FFFFFF',
+  cream: '#FFFDF6',
+  softGreen: '#EAF6D9',
+  mint: '#DDF2CF',
+  teal: '#95D3D6',
+  orange: '#F2A14A',
+  yellow: '#F8D66D',
+  pink: '#F0448C',
+  ink: '#0A0908',
+  muted: '#667085',
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
+export const lightTheme = {
+  mode: 'light' as const,
+  bg: '#ECF8DD',
+  bg2: '#F8FFF1',
+  card: '#FFFFFF',
+  cardSoft: '#F7FBF1',
+  text: '#0A0908',
+  muted: '#667085',
+  border: '#DCE8D4',
+  primary: BM.deepBlue,
+  accent: BM.green,
+  shadow: '#000000',
+};
+
+export const darkTheme = {
+  mode: 'dark' as const,
+  bg: '#071507',
+  bg2: '#0B1F12',
+  card: '#102617',
+  cardSoft: '#15351F',
+  text: '#F8FFF1',
+  muted: '#C6D3C2',
+  border: '#315B35',
+  primary: '#79B6FF',
+  accent: '#7BE05B',
+  shadow: '#000000',
+};
+
+export const Colors = {
+  light: { text: BM.ink, background: BM.white, tint: BM.deepBlue, icon: '#687076', tabIconDefault: '#687076', tabIconSelected: BM.deepBlue },
+  dark: { text: BM.white, background: BM.black, tint: BM.green, icon: '#9BA1A6', tabIconDefault: '#9BA1A6', tabIconSelected: BM.green },
+};
