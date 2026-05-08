@@ -1,7 +1,8 @@
 from typing import List, Dict, Any, Optional
 from sqlalchemy import text
 
-from database import get_engine
+from api.routes.database import get_engine
+
 SECRET_NAME = "database-2"
 REGION = "us-east-2"
 engine = get_engine(SECRET_NAME, REGION)
@@ -73,3 +74,6 @@ def fetch_product_by_id(product_id: str) -> Optional[Dict[str, Any]]:
         result = conn.execute(text(query), {"product_id": product_id})
         row = result.mappings().first()
         return dict(row) if row else None
+    
+def fetch_product_detail(product_id: str) -> Optional[Dict[str, Any]]:
+    return fetch_product_by_id(product_id)

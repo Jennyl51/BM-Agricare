@@ -31,11 +31,11 @@ export function BounceButton({ children, style, onPress, disabled }: { children:
   const press = () => {
     Animated.sequence([
       Animated.parallel([
-        Animated.timing(scale, { toValue: 0.95, duration: 80, useNativeDriver: true }),
+        Animated.timing(scale, { toValue: 0.95, duration: 80, useNativeDriver: false }),
         Animated.timing(glow, { toValue: 1, duration: 80, useNativeDriver: false }),
       ]),
       Animated.parallel([
-        Animated.spring(scale, { toValue: 1, useNativeDriver: true, bounciness: 11 }),
+        Animated.spring(scale, { toValue: 1, useNativeDriver: false, bounciness: 11 }),
         Animated.timing(glow, { toValue: 0, duration: 250, useNativeDriver: false }),
       ]),
     ]).start();
@@ -43,7 +43,7 @@ export function BounceButton({ children, style, onPress, disabled }: { children:
   };
   const shadowOpacity = glow.interpolate({ inputRange: [0, 1], outputRange: [0.16, 0.35] });
   return (
-    <Pressable disabled={disabled} onPress={press} onHoverIn={() => Animated.spring(scale, { toValue: 1.025, useNativeDriver: true }).start()} onHoverOut={() => Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start()}>
+    <Pressable disabled={disabled} onPress={press} onHoverIn={() => Animated.spring(scale, { toValue: 1.025, useNativeDriver: false }).start()} onHoverOut={() => Animated.spring(scale, { toValue: 1, useNativeDriver: false }).start()}>
       <Animated.View style={[styles.buttonShadow, style, disabled && { opacity: 0.55 }, { transform: [{ scale }], shadowOpacity }]}>{children}</Animated.View>
     </Pressable>
   );
