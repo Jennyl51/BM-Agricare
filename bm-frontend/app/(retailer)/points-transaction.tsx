@@ -7,6 +7,7 @@ import Navbar from '@/components/Navbar';
 import { BM } from '@/constants/theme';
 import { BackgroundBlobs, BounceButton, FadeIn, HeaderAction, InsetOverlay } from '@/components/AgricareUI';
 import { useApp } from '@/components/AppContext';
+import FallingSprites from '@/components/FallingSprites';
 import { clearInvoiceDraft, getInvoiceDraft, setInvoiceDraft, submitInvoice } from '@/services/invoiceApi';
 import { getProductsList } from '@/services/productsApi';
 
@@ -107,6 +108,7 @@ export default function UploadInvoiceScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.bg }]}> 
       <BackgroundBlobs />
+      <FallingSprites key={`submit-fall-${success?.invoice_id || success?.id || success?.status || success?.submission_status || 'success'}`} variant="all" count={200} duration={2800} loop={false} active={!!success} />
       <View style={styles.fieldBackdrop} />
       <View style={styles.topPanel}>
         <HeaderAction title="Create Invoice" subtitle="Enter product quantities, attach the invoice PDF, then review before submitting." icon="upload-cloud" />
