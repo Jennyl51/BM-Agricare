@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import Navbar from '@/components/Navbar';
 import { BM } from '@/constants/theme';
 import { BackgroundBlobs, BounceButton, FadeIn, ProductCard } from '@/components/AgricareUI';
+import FallingSprites, { getRewardFallVariant } from '@/components/FallingSprites';
 import { useApp } from '@/components/AppContext';
 import { getPointsHistory, getPointsSummary, getRewardsList, redeemReward } from '@/services/rewardApi';
 import { getProductsList } from '@/services/productsApi';
@@ -29,6 +30,8 @@ export default function RewardsScreen() {
   const [products, setProducts] = useState<any[]>([]);
   const [selected, setSelected] = useState<Reward | null>(null);
   const [confetti, setConfetti] = useState(false);
+  const [introFall, setIntroFall] = useState(true);
+  const [tierFallReady, setTierFallReady] = useState(false);
 
   const refresh = () => Promise.all([
     getRewardsList(), getPointsSummary(), getPointsHistory(), getProductsList(),
@@ -48,16 +51,23 @@ export default function RewardsScreen() {
     await redeemReward(reward.reward_id, 1);
     setSelected(null);
     setConfetti(true);
-    setTimeout(() => setConfetti(false), 1300);
+    setTimeout(() => setConfetti(false), 3900);
     refresh().catch(() => null);
   };
 
+  const startTierFall = useCallback(() => setTierFallReady(true), []);
+  const finishIntroFall = useCallback(() => setIntroFall(false), []);
+
   const progress = Math.min(100, Math.round((points / 9000) * 100));
+  const rewardFallVariant = getRewardFallVariant(points, tier);
   const unlocked = rewards.filter((r) => points >= r.points_needed).length;
 
   return (
     <View style={[styles.container, { backgroundColor: theme.bg }]}> 
       <BackgroundBlobs />
+      <FallingSprites variant="all" count={34} duration={2600} loop={false} active={introFall} onEmitComplete={startTierFall} onComplete={finishIntroFall} />
+      <FallingSprites variant={rewardFallVariant} count={16} duration={5600} active={tierFallReady} />
+      <FallingSprites variant="all" count={30} duration={2500} loop={false} active={confetti} />
       <Confetti play={confetti} />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>

@@ -6,7 +6,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BM } from '@/constants/theme';
 import { useApp } from '@/components/AppContext';
 
-const tabs = [
+type Tab = { name: string; label?: string; route: string; icon: keyof typeof Feather.glyphMap };
+
+const retailerTabs: Tab[] = [
   { name: 'home', route: '/home-retailers', icon: 'home' },
   { name: 'guides', route: '/tech_guidelines', icon: 'book-open' },
   { name: 'upload', route: '/points-transaction', icon: 'plus' },
@@ -14,9 +16,17 @@ const tabs = [
   { name: 'user', route: '/users-retailers', icon: 'user' },
 ];
 
+const tceTabs: Tab[] = [
+  { name: 'tasks', label: 'tasks', route: '/tce-dashboard', icon: 'home' },
+  { name: 'map', label: 'map', route: '/map', icon: 'map' },
+  { name: 'invoices', label: 'invoices', route: '/invoices', icon: 'plus' },
+  { name: 'user', label: 'user', route: '/profile', icon: 'user' },
+  { name: 'consultation', label: 'consultation', route: '/consulation-request', icon: 'message-circle' },
+];
+
 const quickLanguages = ['en', 'vi', 'th', 'zh'] as const;
 
-function NavTab({ tab, active, onPress }: { tab: (typeof tabs)[number]; active: boolean; onPress: () => void }) {
+function NavTab({ tab, active, onPress }: { tab: Tab; active: boolean; onPress: () => void }) {
   const { t } = useApp();
   const scale = useRef(new Animated.Value(1)).current;
   const bounce = () => {
@@ -30,9 +40,9 @@ function NavTab({ tab, active, onPress }: { tab: (typeof tabs)[number]; active: 
   return (
     <Pressable style={styles.tab} onPress={bounce} onHoverIn={() => Animated.spring(scale, { toValue: 1.08, useNativeDriver: true }).start()} onHoverOut={() => Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start()}>
       <Animated.View style={[styles.iconWrap, active && styles.activeIconWrap, { transform: [{ scale }] }]}> 
-        <Feather name={tab.icon as any} size={active && tab.name === 'upload' ? 31 : 22} color={active ? BM.green : '#FFFFFF'} />
+        <Feather name={tab.icon} size={active && tab.icon === 'plus' ? 30 : 22} color={active ? BM.green : '#FFFFFF'} />
       </Animated.View>
-      <Text style={[styles.text, active && styles.activeText]}>{t(tab.name)}</Text>
+      <Text numberOfLines={1} style={[styles.text, active && styles.activeText]}>{tab.label || t(tab.name)}</Text>
     </Pressable>
   );
 }
@@ -68,7 +78,7 @@ function SideQuickSettings() {
             <View style={styles.quickLabelWrap}><Feather name="globe" size={15} color={BM.green} /><Text style={[styles.quickLabel, { color: theme.text }]}>{t('language')}</Text></View>
             <Pressable onPress={cycleLanguage} style={styles.languageToggle}><Text style={styles.languageToggleText}>{language.toUpperCase()}</Text></Pressable>
           </View>
-          <Text style={[styles.quickHint, { color: theme.muted }]}>More account details live on the user page.</Text>
+          <Text style={[styles.quickHint, { color: theme.muted }]}>Use this slide-out control on every mobile page.</Text>
         </View>
       </View>
     </Animated.View>
@@ -78,6 +88,8 @@ function SideQuickSettings() {
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
+  const isTce = pathname === '/tce-dashboard' || pathname === '/profile' || pathname === '/consulation-request' || pathname === '/invoices' || pathname === '/map';
+  const tabs = isTce ? tceTabs : retailerTabs;
 
   return (
     <>
@@ -85,7 +97,7 @@ export default function Navbar() {
       <View style={[styles.nav, { backgroundColor: BM.deepBlue }]}> 
         {tabs.map((tab) => {
           const isActive = pathname === tab.route || (pathname === '/retailer-dashboard' && tab.name === 'home');
-          return <NavTab key={tab.name} tab={tab} active={isActive} onPress={() => router.push(tab.route as Href)} />;
+          return <NavTab key={tab.route} tab={tab} active={isActive} onPress={() => router.push(tab.route as Href)} />;
         })}
         <View style={styles.homeIndicator} />
       </View>
@@ -116,7 +128,7 @@ const styles = StyleSheet.create({
   tab: { alignItems: 'center', justifyContent: 'center', flex: 1, gap: 4, minHeight: 56 },
   iconWrap: { width: 40, height: 34, alignItems: 'center', justifyContent: 'center', borderRadius: 14 },
   activeIconWrap: { backgroundColor: 'rgba(104,188,69,0.14)' },
-  text: { fontSize: 12, color: '#FFFFFF', fontWeight: '600' },
+  text: { fontSize: 11, color: '#FFFFFF', fontWeight: '600' },
   activeText: { color: BM.green, fontWeight: '900' },
   homeIndicator: { position: 'absolute', bottom: 8, alignSelf: 'center', width: 126, height: 5, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.55)' },
   quickPanelWrap: { position: 'absolute', right: 0, bottom: 120, zIndex: 90 },
