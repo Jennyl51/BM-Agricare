@@ -50,9 +50,9 @@ export default function SalesChart() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="Entec" strokeWidth={3} />
-            <Line type="monotone" dataKey="Nitrophoska" strokeWidth={3} />
-            <Line type="monotone" dataKey="Fertiganic" strokeWidth={3} />
+            <Line type="monotone" dataKey="Entec" stroke="#7ac143" strokeWidth={3} />
+            <Line type="monotone" dataKey="Nitrophoska" stroke="#06357a" strokeWidth={3} />
+            <Line type="monotone" dataKey="Fertiganic" stroke="#6799c8" strokeWidth={3} />
           </LineChart>
         </ResponsiveContainer>
       </div>

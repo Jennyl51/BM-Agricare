@@ -6,6 +6,8 @@ import {
   Gift,
   LogOut,
   Package,
+  Newspaper,
+  Settings,
 } from "lucide-react";
 
 const navItems = [
@@ -14,6 +16,8 @@ const navItems = [
   { label: "Retailers", path: "/retailers", icon: Users },
   { label: "Products", path: "/products", icon: Package },
   { label: "Rewards", path: "/rewards", icon: Gift },
+  { label: "Resources", path: "/resources", icon: Newspaper },
+  { label: "Settings", path: "/settings", icon: Settings },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

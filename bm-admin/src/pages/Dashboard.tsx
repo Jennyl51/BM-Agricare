@@ -2,6 +2,8 @@ import AdminLayout from "../components/AdminLayout";
 import StatCard from "../components/StatCard";
 import SalesChart from "../components/SalesChart";
 import TierRegionChart from "../components/TierRegionChart";
+import {Link} from "react-router-dom";
+
 import {
   summaryCards,
   invoices,
@@ -59,24 +61,51 @@ export default function Dashboard() {
           <div className="card">
             <h2>Recent Invoices</h2>
             {invoices.map((invoice) => (
-              <div
-                key={invoice.invoice_id}
+            <Link
+              key={invoice.invoice_id}
+              to={`/invoices/${invoice.invoice_id}`}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                borderTop: "1px solid #eee",
+                padding: "14px 0",
+                color: "inherit",
+                textDecoration: "none",
+                cursor: "pointer",
+              }}
+            >
+              <div>
+                <strong>INV-{invoice.invoice_id}</strong>
+                <p style={{ margin: "4px 0", color: "#667085" }}>
+                  {invoice.retailer_name} · {invoice.region} · ${invoice.total_sales}
+                </p>
+              </div>
+
+              <span
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  borderTop: "1px solid #eee",
-                  padding: "14px 0",
+                  padding: "6px 10px",
+                  borderRadius: 999,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  background:
+                    invoice.status === "Approved"
+                      ? "rgba(122, 193, 67, 0.15)"
+                      : invoice.status === "Rejected"
+                      ? "rgba(227, 27, 35, 0.12)"
+                      : "rgba(251, 176, 52, 0.18)",
+                  color:
+                    invoice.status === "Approved"
+                      ? "#2f7d32"
+                      : invoice.status === "Rejected"
+                      ? "#e31b23"
+                      : "#9a6700",
                 }}
               >
-                <div>
-                  <strong>INV-{invoice.invoice_id}</strong>
-                  <p style={{ margin: "4px 0", color: "#667085" }}>
-                    {invoice.retailer_name} · {invoice.region} · ${invoice.total_sales}
-                  </p>
-                </div>
-                <span>{invoice.status}</span>
-              </div>
-            ))}
+                {invoice.status}
+              </span>
+            </Link>
+          ))}
           </div>
 
           <div className="card">

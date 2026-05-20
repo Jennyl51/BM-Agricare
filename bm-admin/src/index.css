@@ -31,31 +31,49 @@ a {
 }
 
 .primary-btn {
-  background: #2f6b3f;
+  background: var(--bm-blue);
   color: white;
   border: none;
   border-radius: 14px;
   padding: 12px 18px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.green-btn {
+  background: var(--agricare-green);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-weight: 700;
 }
 
 .secondary-btn {
-  background: #eef4eb;
-  color: #2f6b3f;
+  background: rgba(103, 153, 200, 0.15);
+  color: var(--bm-blue);
   border: none;
   border-radius: 14px;
   padding: 10px 14px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .danger-btn {
-  background: #fff0f0;
-  color: #b42318;
+  background: rgba(227, 27, 35, 0.1);
+  color: var(--ingredients-red);
   border: none;
   border-radius: 14px;
   padding: 10px 14px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(6, 53, 122, 0.06);
 }

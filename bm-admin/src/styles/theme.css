@@ -1,0 +1,18 @@
+:root {
+    --bm-blue: #06357a;
+    --bm-gray: #807f83;
+    --agricare-green: #7ac143;
+    --ingredients-red: #e31b23;
+    --chemicals-yellow: #fbb034;
+    --polymers-sky-blue: #6799c8;
+  
+    --bg: #f7faf5;
+    --card-bg: #ffffff;
+    --text-main: #102033;
+    --text-muted: #667085;
+    --border: #e5e7eb;
+  
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --shadow-card: 0 10px 30px rgba(6, 53, 122, 0.08);
+  }

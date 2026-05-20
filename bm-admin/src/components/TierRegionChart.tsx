@@ -24,10 +24,10 @@ import {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="bronze" stackId="tiers" />
-              <Bar dataKey="silver" stackId="tiers" />
-              <Bar dataKey="gold" stackId="tiers" />
-              <Bar dataKey="premium" stackId="tiers" />
+              <Bar dataKey="bronze" stackId="tiers" fill="#cd7f32" />
+              <Bar dataKey="silver" stackId="tiers" fill="#c0c0c0" />
+              <Bar dataKey="gold" stackId="tiers" fill="#fbb034" />
+              <Bar dataKey="premium" stackId="tiers" fill="#06357a" />
             </BarChart>
           </ResponsiveContainer>
         </div>
