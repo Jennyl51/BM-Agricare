@@ -28,18 +28,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div style={{ display: "flex", minHeight: "100vh" }}>
       <aside
         style={{
-          width: 260,
+          width: 250,
           background: "#17351f",
           color: "white",
           padding: 24,
           display: "flex",
           flexDirection: "column",
+          height: "100vh",
+          position: "sticky",
+          top: 0,
+          boxSizing: "border-box",
         }}
       >
         <h2 style={{ marginTop: 0 }}>BM AgriCare</h2>
         <p style={{ opacity: 0.7, fontSize: 14 }}>Admin Dashboard</p>
 
-        <nav style={{ display: "grid", gap: 10, marginTop: 32 }}>
+        <nav style={{ display: "grid", gap: 10, marginTop: 32, flex: 1, alignContent: "start" }}>
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.path;
