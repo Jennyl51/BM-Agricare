@@ -41,7 +41,7 @@ export default function RetailerLoginPage() {
         <FadeIn delay={80} style={[styles.card, { backgroundColor: darkMode ? 'rgba(16,38,23,0.92)' : 'rgba(255,255,255,0.84)' }]}> 
           <Image source={brandImage} style={styles.logo} resizeMode="contain" />
           <Text style={[styles.title, { color: theme.text }]}>{mode === 'login' ? 'Retailer Login' : 'Retailer Sign Up'}</Text>
-          <Text style={[styles.subtitle, { color: theme.muted }]}>Demo account: retailer@demo.com / password</Text>
+          <Text style={[styles.subtitle, { color: theme.muted }]}>Demo: retailer@demo.com / password · Diamond: diamond / diamondtier</Text>
           {mode === 'signup' ? <TextInput placeholder="Name" placeholderTextColor="#8EA08B" value={name} onChangeText={setName} style={styles.input} /> : null}
           <TextInput placeholder="Email / Username" placeholderTextColor="#8EA08B" value={username} onChangeText={setUsername} autoCapitalize="none" style={styles.input} />
           {mode === 'signup' ? <TextInput placeholder="Phone number" placeholderTextColor="#8EA08B" value={phone} onChangeText={setPhone} style={styles.input} /> : null}
@@ -49,8 +49,8 @@ export default function RetailerLoginPage() {
           <BounceButton style={styles.button} onPress={handleSubmit} disabled={submitting}>
             <Text style={styles.buttonText}>{submitting ? 'Opening...' : mode === 'login' ? 'Login to Retailer App' : 'Create Retailer Account'}</Text>
           </BounceButton>
-          <Pressable onPress={() => setMode(mode === 'login' ? 'signup' : 'login')}>
-            <Text style={styles.linkText}>{mode === 'login' ? 'Need an account? Sign up' : 'Already have an account? Login'}</Text>
+          <Pressable onPress={() => router.replace('/login')}>
+            <Text style={styles.linkText}>Need an account? Create verified BM account</Text>
           </Pressable>
         </FadeIn>
       </View>

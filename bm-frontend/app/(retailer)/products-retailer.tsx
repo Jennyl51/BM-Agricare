@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 31, fontWeight: '900', marginBottom: 12 },
   search: { height: 46, borderRadius: 17, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, borderWidth: 1, shadowColor: '#000', shadowOpacity: 0.08, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 3 },
   searchInput: { flex: 1, fontWeight: '800' },
-  content: { paddingHorizontal: 22, paddingBottom: 126 },
+  content: { paddingHorizontal: 22, paddingTop: 140, paddingBottom: 126 },
   categories: { gap: 8, marginBottom: 16, paddingRight: 20 },
   chip: { backgroundColor: '#DBEAFE', borderRadius: 999, paddingHorizontal: 14, paddingVertical: 8 },
   chipActive: { backgroundColor: BM.deepBlue },

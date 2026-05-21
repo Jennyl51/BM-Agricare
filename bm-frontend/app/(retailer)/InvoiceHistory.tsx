@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   subtitle: { fontWeight: '700', fontSize: 12, marginTop: 4 },
   searchRow: { marginHorizontal: 24, height: 48, borderWidth: 1, borderRadius: 18, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, gap: 10, shadowColor: '#000', shadowOpacity: 0.08, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 3 },
   input: { flex: 1, fontWeight: '800' },
-  list: { padding: 24, paddingBottom: 126 },
+  list: { padding: 24, paddingTop: 150, paddingBottom: 126 },
   row: { minHeight: 66, borderRadius: 18, borderWidth: 1, padding: 13, marginBottom: 10, flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.07, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 3 },
   rowTitle: { fontWeight: '900' },
   rowSub: { fontSize: 11, fontWeight: '700', marginTop: 3 },
