@@ -3,6 +3,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL || DEFAULT_BASE_URL;
 const FORCE_LOCAL = process.env.EXPO_PUBLIC_FORCE_LOCAL === 'true';
 
 const STORAGE_KEY = 'bm_agricare_local_store_v2';
+const AUTH_STORAGE_KEY = 'bm_agricare_auth_token_v2';
 
 const mockProducts = [
   { product_id: 'esta-kieserite', name: 'ESTA Kieserite', category: 'Straight Fertilizers', price: 120, points_factor: 20, image_url: 'https://images.unsplash.com/photo-1615811361523-6bd03d7748e7?auto=format&fit=crop&w=700&q=80', description: 'Magnesium and sulphur fertilizer for healthier crops.' },
@@ -35,12 +36,13 @@ function defaultStore() {
     activeUser: null,
     users: {
       'retailer@demo.com': { user_id: 'demo-retailer', username: 'retailer@demo.com', email: 'retailer@demo.com', password: 'password', name: 'Tin Bao Tran', phone_number: '+84 000 000', user_type: 'retailer', region: 'Tin Berry Farm | Mekong Delta', tier: 'Gold', total_points: 7809 },
+      'diamond': { user_id: 'demo-diamond-retailer', username: 'diamond', email: 'diamond@bm-agricare.local', password: 'diamondtier', name: 'Diamond Demo Retailer', phone_number: '+84 888 888', user_type: 'retailer', region: 'Diamond Farm | Mekong Delta', tier: 'Diamond', total_points: 18500 },
       'tce@demo.com': { user_id: 'demo-tce', username: 'tce@demo.com', email: 'tce@demo.com', password: 'password', name: 'TCE Admin', phone_number: '+84 111 111', user_type: 'tce', region: 'Mekong Delta', tier: 'Staff', total_points: 0 },
     },
-    invoicesByUser: { 'retailer@demo.com': [], 'tce@demo.com': [] },
-    redemptionsByUser: { 'retailer@demo.com': [], 'tce@demo.com': [] },
-    historyByUser: { 'retailer@demo.com': [], 'tce@demo.com': [] },
-    invoiceDraftByUser: { 'retailer@demo.com': [], 'tce@demo.com': [] },
+    invoicesByUser: { 'retailer@demo.com': [], 'diamond': [], 'tce@demo.com': [] },
+    redemptionsByUser: { 'retailer@demo.com': [], 'diamond': [], 'tce@demo.com': [] },
+    historyByUser: { 'retailer@demo.com': [], 'diamond': [{ id: 'h-diamond-welcome', points_earned: 18500, points_redeemed: 0, description: 'Demo Diamond tier balance', occurred_at: '2026-05-21' }], 'tce@demo.com': [] },
+    invoiceDraftByUser: { 'retailer@demo.com': [], 'diamond': [], 'tce@demo.com': [] },
   };
 }
 
@@ -92,13 +94,35 @@ function mockResponse(endpoint, method = 'GET', body = null) {
   if (clean === '/auth/login' && method === 'POST') {
     const username = body?.username || body?.email || 'retailer@demo.com';
     const found = store.users[username] || store.users['retailer@demo.com'];
+    if (username === 'diamond' && body?.password && body.password !== 'diamondtier') throw new Error('Invalid Diamond demo password. Use diamondtier.');
     store.activeUser = username in store.users ? username : 'retailer@demo.com';
     writeStore(store);
-    return { access_token: 'local-demo-token', id_token: 'local-demo-id', refresh_token: 'local-demo-refresh', user_type: found.user_type || 'retailer', user: found };
+    const token = store.activeUser === 'diamond' ? 'diamond-demo-token' : 'local-demo-token';
+    if (storageAvailable()) localStorage.setItem(AUTH_STORAGE_KEY, token);
+    return { access_token: token, id_token: `${token}-id`, refresh_token: `${token}-refresh`, user_type: found.user_type || 'retailer', user: found };
   }
   if (clean === '/auth/signup' && method === 'POST') {
     const username = body?.username || body?.email || `user-${Date.now()}@demo.com`;
-    store.users[username] = { user_id: `user-${Date.now()}`, username, email: body?.email || username, password: body?.password || 'password', name: body?.name || 'New Retailer', phone_number: body?.phone_number || '', user_type: body?.user_type || 'retailer', region: 'New Farm Location', tier: 'Starter', total_points: 0 };
+    store.users[username] = {
+      user_id: `user-${Date.now()}`,
+      username,
+      email: body?.email || username,
+      password: body?.password || 'password',
+      name: body?.name || `${body?.first_name || ''} ${body?.last_name || ''}`.trim() || 'New Retailer',
+      first_name: body?.first_name || '',
+      last_name: body?.last_name || '',
+      phone_number: body?.phone_number || '',
+      user_type: body?.user_type || 'retailer',
+      store_name: body?.store_name || '',
+      store_location: body?.store_location || '',
+      region: body?.region || body?.store_location || 'New Farm Location',
+      accepts_terms: !!body?.accepts_terms,
+      receives_updates: !!body?.receives_updates,
+      profile_photo_status: body?.profile_photo_status || 'missing',
+      verified: body?.verified ?? true,
+      tier: body?.user_type === 'tce' ? 'Staff' : 'Starter',
+      total_points: 0
+    };
     store.invoicesByUser[username] = [];
     store.redemptionsByUser[username] = [];
     store.historyByUser[username] = [];
@@ -122,7 +146,8 @@ function mockResponse(endpoint, method = 'GET', body = null) {
   if (clean.startsWith('/guidelines/')) return guides.find((g) => String(g.guideline_id) === clean.split('/').pop()) || guides[0];
   if (clean === '/rewards') return rewards;
   if (clean === '/points/summary') {
-    const nextTierPoints = user.tier === 'Premium' ? 0 : Math.max(0, 9000 - Number(user.total_points || 0));
+    const normalizedTier = String(user.tier || '').toLowerCase();
+    const nextTierPoints = normalizedTier === 'diamond' || normalizedTier === 'premium' ? 0 : Math.max(0, 9000 - Number(user.total_points || 0));
     return { total_points: Number(user.total_points || 0), tier: user.tier || 'Starter', next_tier_points: nextTierPoints, lifetime_points: Number(user.total_points || 0) };
   }
   if (clean === '/points/history') return store.historyByUser[key] || [];
@@ -164,13 +189,16 @@ function mockResponse(endpoint, method = 'GET', body = null) {
 }
 
 export async function apiRequest(endpoint, method = 'GET', body = null) {
-  if (FORCE_LOCAL) return mockResponse(endpoint, method, body);
+  // Keep the Diamond demo fully deterministic even when a local backend is not running.
+  if (FORCE_LOCAL || (endpoint === '/auth/login' && body?.username === 'diamond')) return mockResponse(endpoint, method, body);
   try {
     const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
     const timer = controller ? setTimeout(() => controller.abort(), 1600) : null;
+    const token = storageAvailable() ? localStorage.getItem(AUTH_STORAGE_KEY) : null;
+    const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: body ? JSON.stringify(body) : null,
       signal: controller?.signal,
     });
@@ -178,6 +206,9 @@ export async function apiRequest(endpoint, method = 'GET', body = null) {
     const text = await response.text();
     const data = text ? JSON.parse(text) : null;
     if (!response.ok) throw new Error(data?.detail?.message || data?.detail || 'Request failed');
+    if ((endpoint === '/auth/login' || endpoint === '/auth/signup') && data?.access_token && storageAvailable()) {
+      localStorage.setItem(AUTH_STORAGE_KEY, data.access_token);
+    }
     return data;
   } catch (error) {
     const fallback = mockResponse(endpoint, method, body);

@@ -49,8 +49,8 @@ export default function TCELoginPage() {
           <BounceButton style={styles.button} onPress={handleSubmit} disabled={submitting}>
             <Text style={styles.buttonText}>{submitting ? 'Opening...' : mode === 'login' ? 'Login to TCE App' : 'Create TCE Account'}</Text>
           </BounceButton>
-          <Pressable onPress={() => setMode(mode === 'login' ? 'signup' : 'login')}>
-            <Text style={styles.linkText}>{mode === 'login' ? 'Need an account? Sign up' : 'Already have an account? Login'}</Text>
+          <Pressable onPress={() => router.replace('/login')}>
+            <Text style={styles.linkText}>Need an account? Create verified BM account</Text>
           </Pressable>
         </FadeIn>
       </View>

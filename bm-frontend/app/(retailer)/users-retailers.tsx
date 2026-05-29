@@ -34,7 +34,7 @@ export default function UsersRetailers() {
     <View style={[styles.container, { backgroundColor: theme.bg }]}> 
       <BackgroundBlobs />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <FarmHero height={336} image="crops">
+        <FarmHero height={460} image="crops">
           <View style={styles.topRow}><Text style={styles.profileTitle}>User Page</Text></View>
           <Image source={{ uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80' }} style={styles.avatar} />
           <Text style={styles.name}>{profile.name}</Text>
@@ -94,10 +94,10 @@ export default function UsersRetailers() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { paddingBottom: 126 },
-  topRow: { position: 'absolute', top: 40, left: 24, right: 24, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', zIndex: 2 },
+  scrollContent: { paddingTop: 0, paddingBottom: 126 },
+  topRow: { position: 'absolute', top: 148, left: 24, right: 24, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', zIndex: 2 },
   profileTitle: { color: '#FFFFFF', fontSize: 25, fontWeight: '900' },
-  avatar: { width: 126, height: 126, borderRadius: 63, borderWidth: 4, borderColor: '#FFFFFF', marginTop: 42 },
+  avatar: { width: 126, height: 126, borderRadius: 63, borderWidth: 4, borderColor: '#FFFFFF', marginTop: 154 },
   name: { color: '#FFFFFF', fontSize: 22, fontWeight: '900', marginTop: 10 },
   location: { color: '#FFFFFF', fontSize: 11, fontWeight: '700', opacity: 0.96, marginTop: 2 },
   statsRow: { flexDirection: 'row', marginHorizontal: 23, marginTop: -44, borderRadius: 20, overflow: 'hidden', shadowColor: '#000', shadowOpacity: 0.16, shadowOffset: { width: 0, height: 8 }, shadowRadius: 17, elevation: 6 },

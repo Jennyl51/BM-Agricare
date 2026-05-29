@@ -84,7 +84,7 @@ export default function ConsultationRequest() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  content: { paddingHorizontal: 22, paddingTop: 22, paddingBottom: 126 },
+  content: { paddingHorizontal: 22, paddingTop: 150, paddingBottom: 126 },
   header: { marginBottom: 14 },
   title: { fontSize: 30, fontWeight: '900' },
   subtitle: { fontSize: 12, fontWeight: '700', lineHeight: 18, marginTop: 4 },

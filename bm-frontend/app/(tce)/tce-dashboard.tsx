@@ -97,7 +97,7 @@ export default function TCEDashboard() {
           <Feather name="zap" size={20} color={BM.green} />
           <View style={{ flex: 1 }}>
             <Text style={[styles.tipTitle, { color: theme.text }]}>Daily workflow</Text>
-            <Text style={[styles.tipText, { color: theme.muted }]}>Clear urgent invoices first, then open the map to group nearby retailer visits and consultation requests.</Text>
+            <Text style={[styles.tipText, { color: theme.muted }]}>Clear urgent invoices first, then open retailers to group nearby visits and consultation requests.</Text>
           </View>
         </FadeIn>
       </ScrollView>
@@ -108,15 +108,15 @@ export default function TCEDashboard() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  content: { paddingBottom: 126 },
-  hero: { height: 250, marginHorizontal: 8, marginTop: 4, borderBottomLeftRadius: 42, borderBottomRightRadius: 42, overflow: 'hidden', justifyContent: 'center', alignItems: 'center' },
+  content: { paddingTop: 0, paddingBottom: 126 },
+  hero: { height: 330, marginHorizontal: 0, marginTop: 0, borderBottomLeftRadius: 42, borderBottomRightRadius: 42, overflow: 'hidden', justifyContent: 'center', alignItems: 'center' },
   heroImage: { resizeMode: 'cover' },
   heroOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(236,248,221,0.18)' },
-  heroCopy: { alignItems: 'center', marginTop: 24 },
+  heroCopy: { alignItems: 'center', marginTop: 116 },
   heroSmall: { fontSize: 19, fontWeight: '900', color: '#0A0908' },
   heroTitle: { fontSize: 43, lineHeight: 47, fontWeight: '900', color: '#0A0908' },
   heroDate: { fontSize: 15, fontWeight: '900', color: '#0A0908' },
-  sectionTight: { marginTop: -28, paddingHorizontal: 22 },
+  sectionTight: { marginTop: 18, paddingHorizontal: 22 },
   sectionTitle: { fontSize: 17, fontWeight: '900', marginBottom: 10 },
   statGrid: { flexDirection: 'row', gap: 18 },
   statCard: { flex: 1, borderRadius: 18, paddingVertical: 16, paddingHorizontal: 12, minHeight: 136, shadowColor: '#000', shadowOpacity: 0.18, shadowOffset: { width: 0, height: 6 }, shadowRadius: 11, elevation: 5 },

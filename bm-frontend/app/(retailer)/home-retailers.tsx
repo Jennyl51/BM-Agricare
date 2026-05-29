@@ -53,7 +53,7 @@ export default function HomeRetailers() {
     <SafeAreaView style={[styles.safe, { backgroundColor: theme.bg }]} edges={['top']}>
       <BackgroundBlobs />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <FarmHero height={292} image="field_house">
+        <FarmHero height={500} image="field_house">
           <FadeIn delay={80} style={styles.heroContent}>
             <Text style={styles.memberText}>Hi {name.split(' ')[0]}, you’re part of our AgriCare network!</Text>
             <View style={styles.pointsCircle}>
@@ -148,14 +148,14 @@ export default function HomeRetailers() {
 const styles = StyleSheet.create({
   safe: { flex: 1 },
   scroll: { flex: 1 },
-  scrollContent: { paddingBottom: 126 },
-  heroContent: { alignItems: 'center', marginTop: 18, paddingHorizontal: 20 },
+  scrollContent: { paddingTop: 0, paddingBottom: 126 },
+  heroContent: { paddingTop: 150, alignItems: 'center', marginTop: 0, paddingHorizontal: 20, paddingBottom: 28 },
   memberText: { color: '#FFFFFF', fontWeight: '900', fontSize: 12, marginBottom: 10, textAlign: 'center', textShadowColor: 'rgba(0,0,0,0.24)', textShadowRadius: 5 },
   pointsCircle: { width: 138, height: 138, borderRadius: 69, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'rgba(104,188,69,0.55)', shadowColor: '#000', shadowOpacity: 0.14, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 5 },
   pointsSmall: { color: BM.deepBlue, fontSize: 10, fontWeight: '800' },
   pointsBig: { color: BM.deepBlue, fontSize: 29, fontWeight: '900', lineHeight: 32 },
   pointsLabel: { color: BM.ink, fontSize: 13, fontWeight: '900' },
-  heroActions: { marginTop: 22, gap: 12, alignItems: 'center', paddingBottom: 12 },
+  heroActions: { marginTop: 22, gap: 12, alignItems: 'center', paddingBottom: 22 },
   invoiceButton: { width: 202, height: 42, borderRadius: 21, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   invoiceButtonText: { fontSize: 13, color: BM.deepBlue, fontWeight: '900' },
   productButton: { width: 202, height: 42, borderRadius: 21, backgroundColor: BM.deepBlue, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },

@@ -215,8 +215,8 @@ export default function UploadInvoiceScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   fieldBackdrop: { position: 'absolute', left: 0, right: 0, top: 130, bottom: 0, opacity: 0.26, backgroundColor: '#9FD47B' },
-  topPanel: { position: 'absolute', left: 0, right: 0, top: 0, backgroundColor: 'rgba(149,211,214,0.92)', borderBottomLeftRadius: 52, borderBottomRightRadius: 52, paddingBottom: 74, zIndex: 0 },
-  scrollContent: { paddingHorizontal: 24, paddingTop: 126, paddingBottom: 126 },
+  topPanel: { position: 'absolute', left: 0, right: 0, top: 0, backgroundColor: 'rgba(149,211,214,0.92)', borderBottomLeftRadius: 52, borderBottomRightRadius: 52, paddingTop: 120, paddingBottom: 58, zIndex: 0 },
+  scrollContent: { paddingHorizontal: 24, paddingTop: 230, paddingBottom: 126 },
   invoiceCard: { borderRadius: 32, padding: 17, borderWidth: 2, shadowColor: '#000', shadowOpacity: 0.13, shadowOffset: { width: 0, height: 10 }, shadowRadius: 20, elevation: 6, zIndex: 3 },
   itemCounterRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 12 },
   counterTitle: { fontSize: 16, fontWeight: '900', textDecorationLine: 'underline' },

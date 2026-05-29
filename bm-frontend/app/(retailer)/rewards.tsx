@@ -65,9 +65,9 @@ export default function RewardsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.bg }]}> 
       <BackgroundBlobs />
-      <FallingSprites variant="all" count={34} duration={2600} loop={false} active={introFall} onEmitComplete={startTierFall} onComplete={finishIntroFall} />
-      <FallingSprites variant={rewardFallVariant} count={16} duration={5600} active={tierFallReady} />
-      <FallingSprites variant="all" count={30} duration={2500} loop={false} active={confetti} />
+      <FallingSprites variant="all" count={200} duration={2600} loop={false} active={introFall} onEmitComplete={startTierFall} onComplete={finishIntroFall} />
+      <FallingSprites variant={rewardFallVariant} count={28} duration={5600} active={tierFallReady} />
+      <FallingSprites variant="all" count={200} duration={2500} loop={false} active={confetti} />
       <Confetti play={confetti} />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
@@ -130,8 +130,8 @@ export default function RewardsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { paddingBottom: 128 },
-  hero: { height: 260, justifyContent: 'center', alignItems: 'center', backgroundColor: BM.deepBlue, borderBottomLeftRadius: 38, borderBottomRightRadius: 38, paddingHorizontal: 28 },
+  scrollContent: { paddingTop: 0, paddingBottom: 128 },
+  hero: { height: 350, justifyContent: 'center', alignItems: 'center', backgroundColor: BM.deepBlue, borderBottomLeftRadius: 38, borderBottomRightRadius: 38, paddingHorizontal: 28, paddingTop: 118 },
   heroKicker: { color: '#DDF2CF', fontWeight: '900', fontSize: 14 },
   heroTitle: { color: '#FFFFFF', fontSize: 44, fontWeight: '900', marginTop: 4 },
   heroSub: { color: '#FFFFFF', fontSize: 13, fontWeight: '800', opacity: 0.9, marginTop: 4 },

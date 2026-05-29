@@ -88,10 +88,10 @@ export default function TechGuidelinesScreen() {
 }
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  greenHeader: { height: 124, backgroundColor: '#8DB955', borderBottomLeftRadius: 56, borderBottomRightRadius: 56, alignItems: 'center', justifyContent: 'center', paddingTop: 32, shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 7 }, shadowRadius: 14 },
+  greenHeader: { height: 196, backgroundColor: '#8DB955', borderBottomLeftRadius: 56, borderBottomRightRadius: 56, alignItems: 'center', justifyContent: 'flex-start', paddingTop: 130, shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 7 }, shadowRadius: 14 },
   headerText: { color: '#FFFFFF', fontSize: 21, fontWeight: '900', letterSpacing: 0.8 },
   headerSub: { color: '#F8FFF1', fontWeight: '800', fontSize: 10, marginTop: 5 },
-  searchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 24, marginTop: 16 },
+  searchRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 24, marginTop: 18 },
   searchBox: { flex: 1, height: 46, borderRadius: 17, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 1, shadowColor: '#000', shadowOpacity: 0.08, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 3 },
   searchInput: { flex: 1, fontSize: 13, fontWeight: '800' },
   filterButton: { width: 46, height: 46, borderRadius: 23, backgroundColor: BM.deepBlue, alignItems: 'center', justifyContent: 'center' },
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   chip: { minWidth: 64, paddingVertical: 8, paddingHorizontal: 14, borderRadius: 999, backgroundColor: '#BEE8EA', alignItems: 'center' },
   chipActive: { backgroundColor: BM.deepBlue },
   chipText: { color: BM.deepBlue, fontSize: 11, fontWeight: '900' },
-  grid: { paddingHorizontal: 24, paddingTop: 18, paddingBottom: 126, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 14 },
+  grid: { paddingHorizontal: 24, paddingTop: 26, paddingBottom: 126, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 14 },
   cardWrap: { width: '48%' },
   guideCard: { borderRadius: 17, overflow: 'hidden', minHeight: 184, borderWidth: 1, shadowColor: '#000', shadowOpacity: 0.08, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 3 },
   cardImage: { width: '100%', height: 82, backgroundColor: '#D9EAC9' },

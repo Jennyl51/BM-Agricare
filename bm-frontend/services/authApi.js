@@ -6,13 +6,6 @@ export function login(username, password) {
 }
 
 // POST /auth/signup
-export function signup({ username, password, name, email, phone_number, user_type }) {
-  return apiRequest("/auth/signup", "POST", {
-    username,
-    password,
-    name,
-    email,
-    phone_number,
-    user_type,
-  });
+export function signup(payload) {
+  return apiRequest("/auth/signup", "POST", payload);
 }

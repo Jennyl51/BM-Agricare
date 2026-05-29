@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import Navbar from '@/components/Navbar';
 import { BackgroundBlobs, BounceButton, FadeIn, InsetOverlay } from '@/components/AgricareUI';
@@ -66,6 +67,11 @@ export default function TCEProfile() {
             </Pressable>
           ))}
         </FadeIn>
+
+        <BounceButton style={styles.logoutButton} onPress={() => router.replace('/login')}>
+          <Feather name="log-out" size={17} color="#FFFFFF" />
+          <Text style={styles.logoutText}>Log out</Text>
+        </BounceButton>
       </ScrollView>
 
       <InsetOverlay visible={!!active} onClose={() => setActive(null)} align="bottom">
@@ -87,11 +93,11 @@ export default function TCEProfile() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },
-  content: { paddingBottom: 126 },
-  hero: { height: 356, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+  content: { paddingTop: 0, paddingBottom: 126 },
+  hero: { height: 486, justifyContent: 'flex-start', alignItems: 'center', overflow: 'hidden', paddingTop: 148 },
   heroImage: { resizeMode: 'cover' },
   heroShade: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.20)' },
-  heroTitle: { color: '#fff', fontSize: 30, fontWeight: '900', marginBottom: 18, marginTop: 20 },
+  heroTitle: { color: '#fff', fontSize: 30, fontWeight: '900', marginBottom: 18, marginTop: 0 },
   avatar: { width: 150, height: 150, borderRadius: 75, backgroundColor: '#E3E3E3', alignItems: 'center', justifyContent: 'center' },
   photoButton: { marginTop: 18, backgroundColor: '#9BE36D', borderRadius: 10, paddingHorizontal: 22, paddingVertical: 9 },
   photoText: { color: '#0A0908', fontSize: 18, fontWeight: '900' },
@@ -124,4 +130,6 @@ const styles = StyleSheet.create({
   uploadText: { color: BM.green, fontWeight: '900' },
   saveButton: { backgroundColor: BM.deepBlue, borderRadius: 14, paddingVertical: 13, alignItems: 'center', marginTop: 14 },
   saveText: { color: '#fff', fontWeight: '900' },
+  logoutButton: { backgroundColor: '#0A0908', borderRadius: 16, paddingVertical: 14, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, marginHorizontal: 24, marginTop: 2, marginBottom: 8 },
+  logoutText: { color: '#FFFFFF', fontWeight: '900' },
 });

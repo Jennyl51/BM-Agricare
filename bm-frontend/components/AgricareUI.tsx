@@ -259,7 +259,7 @@ export function FloatingAvatar() {
 
 const styles = StyleSheet.create({
   shell: { flex: 1 },
-  buttonShadow: { shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowRadius: 12, elevation: 5 },
+  buttonShadow: { borderWidth: 1.5, borderColor: '#0A0908', shadowColor: '#000', shadowOffset: { width: 0, height: 5 }, shadowRadius: 12, elevation: 5 },
   blobOne: { position: 'absolute', width: 320, height: 520, borderRadius: 180, backgroundColor: 'rgba(104,188,69,0.22)', left: -175, top: 40 },
   blobTwo: { position: 'absolute', width: 260, height: 380, borderRadius: 170, backgroundColor: 'rgba(149,211,214,0.20)', right: -145, top: 130 },
   blobThree: { position: 'absolute', width: 240, height: 240, borderRadius: 120, backgroundColor: 'rgba(104,188,69,0.14)', right: 40, bottom: 70 },
