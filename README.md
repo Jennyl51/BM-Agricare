@@ -1,32 +1,71 @@
 # BM AgriCare
 
-BM AgriCare is a mobile and web platform for Behn Meyer AgriCare. The project supports retailers, TCEs, and admins in tracking sales/invoice submissions, managing loyalty points, and handling rewards redemption.
+BM AgriCare is a mobile and web platform for Behn Meyer AgriCare Vietnam. The project supports retailers, TCEs, and admins in tracking invoice submissions, managing loyalty points, reviewing rewards redemption, and viewing admin analytics.
 
 ## Project Overview
 
 The platform is designed for three main roles:
 
-- **Retailers**: submit invoices, view points, redeem rewards, and access product resources.
+- **Retailers**: submit invoices, view points, redeem rewards, and access product resources/news.
 - **TCEs**: review retailer invoice submissions and manage assigned retailers.
-- **Admins**: oversee users, invoices, rewards, and approval workflows.
+- **Admins**: oversee users, invoices, rewards, product data, and analytics workflows.
 
 ## Repository Structure
 
 ```txt
 BM-Agricare/
-├── bm-frontend/         # React Native / Expo mobile frontend
-├── bm-web/              # Express + EJS + Tailwind wireframe web app
-├── bm-backend/          # Backend app structure
+├── bm-frontend/         # Main React Native / Expo mobile app
+├── bm-admin/            # React + TypeScript + Vite admin dashboard
+├── bm-web/              # Older Express + EJS + Tailwind wireframe/prototype app
+├── bm-backend/          # Backend app structure, if used
 ├── api/                 # Backend route files
 ├── db/                  # Database helper files
 ├── services/            # Backend service logic
 ├── requirements.txt     # Python backend dependencies
-└── README.md
+└── README.md            # Main project README
+```
+
+## Main Components
+
+| Component | Folder | Description |
+|---|---|---|
+| Mobile App | `bm-frontend/` | Main Expo mobile app for Retailer and TCE users. |
+| Admin Dashboard | `bm-admin/` | Desktop dashboard for BM admin/manager users. |
+| Wireframe App | `bm-web/` | Older prototype/wireframe web version. |
+| Backend | `api/`, `db/`, `services/`, `bm-backend/` | FastAPI backend and database logic. |
+
+## GitHub Development Options
+
+BM can continue development in either of these ways.
+
+### Option 1: Collaborator Access
+
+BM IT can be added directly to this repository as collaborators.
+
+This is recommended if BM wants Open Project to continue having visibility or support access.
+
+### Option 2: Fork the Repository
+
+BM IT can create a fork of this repository under BM's own GitHub account or organization.
+
+This is recommended if BM wants future development to happen privately without sharing all future changes with the full Open Project team.
+
+To clone the repository:
+
+```bash
+git clone https://github.com/Jennyl51/BM-Agricare.git
+cd BM-Agricare
+```
+
+To pull latest changes:
+
+```bash
+git pull
 ```
 
 ## Frontend: Mobile App
 
-The main frontend is located in:
+The main mobile frontend is located in:
 
 ```bash
 bm-frontend/
@@ -40,30 +79,14 @@ It is built with:
 - TypeScript
 - React Navigation
 
-### Frontend Folder Structure
-
-```txt
-bm-frontend/
-├── app/
-│   ├── (auth)/          # Authentication screens
-│   ├── (retailer)/      # Retailer-facing screens
-│   └── (tce)/           # TCE-facing screens
-├── assets/              # Images and static assets
-├── components/          # Shared UI components
-├── constants/           # Shared constants
-├── hooks/               # Custom React hooks
-├── services/            # API request functions
-└── scripts/             # Utility scripts
-```
-
-### Install Frontend Dependencies
+### Install Mobile Frontend Dependencies
 
 ```bash
 cd bm-frontend
 npm install
 ```
 
-### Run the Frontend on Web
+### Run Mobile Frontend on Web
 
 ```bash
 npm run web
@@ -75,7 +98,7 @@ or:
 npx expo start --web
 ```
 
-### Run the Frontend on Phone with Expo
+### Run Mobile Frontend on Phone with Expo Go
 
 ```bash
 npx expo start
@@ -83,9 +106,46 @@ npx expo start
 
 After running this command, scan the QR code using the Expo Go app on your phone.
 
+## Admin Dashboard
+
+The admin dashboard is located in:
+
+```bash
+bm-admin/
+```
+
+It is built with:
+
+- React
+- TypeScript
+- Vite
+- React Router DOM
+- Recharts
+- Lucide React
+
+### Run Admin Dashboard Locally
+
+```bash
+cd bm-admin
+npm install
+npm run dev
+```
+
+Open the local Vite URL, usually:
+
+```txt
+http://localhost:5173
+```
+
+Login page:
+
+```txt
+http://localhost:5173/login
+```
+
 ## Wireframe Web App
 
-The wireframe web version is located in:
+The wireframe/prototype web version is located in:
 
 ```bash
 bm-web/
@@ -105,12 +165,7 @@ npm install
 npm run dev
 ```
 
-The frontend package also includes a helper command:
-
-```bash
-cd bm-frontend
-npm run wireframe
-```
+Note: `bm-web/` is an older prototype/wireframe version. The main mobile app is `bm-frontend/`.
 
 ## Backend
 
@@ -121,8 +176,8 @@ The backend uses:
 - SQLAlchemy
 - PostgreSQL
 - Pydantic
-- AWS-related tools such as boto3
-- JWT authentication with python-jose
+- boto3 / AWS-related tools
+- JWT authentication with `python-jose`
 
 ### Install Backend Dependencies
 
@@ -144,7 +199,13 @@ pip install -r requirements.txt
 
 ### Run the Backend
 
-Depending on the current backend entry point, use one of the following:
+Use the current backend route path:
+
+```bash
+python -m uvicorn api.routes.main:app --reload
+```
+
+If that command does not work, try one of the alternate entry points depending on the current backend structure:
 
 ```bash
 uvicorn main:app --reload
@@ -156,7 +217,17 @@ or:
 uvicorn app.main:app --reload
 ```
 
-If one command fails with a module import error, try the other based on whether the active `main.py` file is in the root directory or inside an `app/` folder.
+The backend should run at:
+
+```txt
+http://127.0.0.1:8000
+```
+
+FastAPI docs should be available at:
+
+```txt
+http://127.0.0.1:8000/docs
+```
 
 ## Backend Dependencies
 
@@ -175,15 +246,6 @@ pydantic-settings
 python-dotenv
 httpx
 ```
-
-## Development Notes
-
-- The main mobile frontend is in `bm-frontend`.
-- The older wireframe/prototype web app is in `bm-web`.
-- The backend structure is still being finalized between root-level folders and `bm-backend/app`.
-- Some backend endpoints may still be in progress.
-- Retailer frontend screens are currently the most developed.
-- TCE and Admin flows are still being expanded.
 
 ## Useful Commands
 
@@ -209,6 +271,14 @@ npm install
 npx expo start
 ```
 
+### Run Admin Dashboard
+
+```bash
+cd bm-admin
+npm install
+npm run dev
+```
+
 ### Run Wireframe Web App
 
 ```bash
@@ -226,8 +296,18 @@ pip install -r requirements.txt
 ### Run Backend
 
 ```bash
-uvicorn main:app --reload
+python -m uvicorn api.routes.main:app --reload
 ```
+
+## Development Notes
+
+- The main mobile frontend is in `bm-frontend/`.
+- The admin dashboard is in `bm-admin/`.
+- The older prototype/wireframe web app is in `bm-web/`.
+- The backend uses FastAPI and PostgreSQL/RDS.
+- Some frontend data may still use mock/demo data.
+- Official BM product, news, resource, reward, and translation data should replace mock/demo data as development continues.
+- Backend structure may include root-level folders and/or `bm-backend/`, depending on the active backend organization.
 
 ## Links
 

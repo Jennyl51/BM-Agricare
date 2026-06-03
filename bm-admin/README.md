@@ -26,7 +26,7 @@ The dashboard is used for:
 bm-admin/
 ├── src/
 │   ├── components/        # Shared dashboard components
-│   ├── data/              # Mock dashboard data
+│   ├── data/              # Mock/dashboard data
 │   ├── pages/             # Main dashboard pages
 │   ├── App.tsx            # Route definitions
 │   ├── main.tsx           # React app entry point
@@ -35,15 +35,15 @@ bm-admin/
 └── README.md
 ```
 
-## Required Packages
+## Get Started
 
-Install dependencies with:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Additional packages used by this app:
+If packages are missing, install:
 
 ```bash
 npm install react-router-dom lucide-react recharts
@@ -51,7 +51,7 @@ npm install react-router-dom lucide-react recharts
 
 ## Run the Admin Dashboard Locally
 
-From the root repo:
+From the root repository:
 
 ```bash
 cd bm-admin
@@ -75,7 +75,7 @@ http://localhost:5173/login
 
 Open a separate terminal tab.
 
-From the root repo:
+From the root repository:
 
 ```bash
 source venv/bin/activate
@@ -110,33 +110,62 @@ Example test URL:
 http://127.0.0.1:8000/admin/analytics/summary
 ```
 
-## AWS Login for Backend
+## Where to Make Common Changes
 
-Some backend routes connect to AWS/RDS through Secrets Manager. If the backend fails with an expired AWS session, run:
+| Change Type | Location |
+|---|---|
+| Admin pages | `src/pages/` |
+| Shared dashboard components | `src/components/` |
+| Mock/dashboard data | `src/data/` |
+| Route definitions | `src/App.tsx` |
+| React app entry point | `src/main.tsx` |
+| Global styles/colors | `src/index.css` |
 
-```bash
-aws login
+## Change Text
+
+Most visible dashboard text is inside:
+
+```txt
+src/pages/
+src/components/
 ```
 
-Then verify login:
+Example:
 
-```bash
-aws sts get-caller-identity
+```tsx
+<h1>Dashboard</h1>
 ```
 
-Then restart the backend:
+Change to:
 
-```bash
-python -m uvicorn api.routes.main:app --reload
+```tsx
+<h1>Admin Dashboard</h1>
 ```
 
-## Current Development Notes
+## Change Colors or Styles
 
-- `bm-admin` currently uses mock data for the dashboard UI.
-- Backend mock admin analytics endpoints have been added.
-- The admin dashboard should eventually fetch data from the backend instead of local mock data.
-- Real PostgreSQL seed data can be added later after the dashboard and API shapes are stable.
-- BM users should not need to run this app locally. Once deployed, they should only need a website link and login credentials.
+Global styles are located in:
+
+```txt
+src/index.css
+```
+
+Page/component-specific styles may also be inside individual files under:
+
+```txt
+src/pages/
+src/components/
+```
+
+## Edit Mock Data
+
+Mock/dashboard data is located in:
+
+```txt
+src/data/
+```
+
+As development continues, mock data should be replaced with backend API calls and real database data.
 
 ## Recommended Development Flow
 
@@ -166,125 +195,87 @@ http://127.0.0.1:8000/docs
 http://localhost:5173/login
 ```
 
-## Common Issues
+## AWS Login for Backend
 
-### Blank page in browser
-
-Open browser console:
-
-```txt
-Right click → Inspect → Console
-```
-
-Common causes:
-
-- Missing import in `App.tsx`
-- Empty page/component file
-- Route points to a component that is not exported
-- Package not installed
-
-### `Products is not defined`
-
-Make sure `src/App.tsx` includes:
-
-```tsx
-import Products from "./pages/Products";
-```
-
-### `ModuleNotFoundError: No module named 'main'`
-
-Use the correct backend module path:
-
-```bash
-python -m uvicorn api.routes.main:app --reload
-```
-
-### `LoginRefreshRequired`
-
-AWS login expired. Run:
+Some backend routes may connect to AWS/RDS through Secrets Manager or AWS credentials. If the backend fails with an expired AWS session, run:
 
 ```bash
 aws login
 ```
 
-## Default Vite Template Notes
+Then verify login:
 
-This project was created with the React + TypeScript + Vite template.
-
-Vite provides a minimal setup to get React working with hot module replacement and ESLint rules. (The following ReadMe is the set up instruction.)
-
-
-
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+aws sts get-caller-identity
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Then restart the backend:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+python -m uvicorn api.routes.main:app --reload
 ```
+
+## Common Issues / FAQ
+
+**Q: What should I do if the admin dashboard opens as a blank page?**
+
+A: Open the browser console to check the error message:
+
+```txt
+Right click → Inspect → Console
+```
+
+Common causes include:
+
+- Missing import in `App.tsx`
+- Empty page/component file
+- Route points to a component that is not exported
+- Required package is not installed
+
+---
+
+**Q: What should I do if I see `Products is not defined`?**
+
+A: Make sure `src/App.tsx` includes the Products page import:
+
+```tsx
+import Products from "./pages/Products";
+```
+
+---
+
+**Q: What should I do if the backend has a module error?**
+
+A: Try running the backend with the current route path:
+
+```bash
+python -m uvicorn api.routes.main:app --reload
+```
+
+If this does not work, check where the active FastAPI `main.py` file is located and adjust the command.
+
+---
+
+**Q: What should I do if the AWS login/session is expired?**
+
+A: Refresh the AWS login:
+
+```bash
+aws login
+```
+
+Then verify the account:
+
+```bash
+aws sts get-caller-identity
+```
+
+After that, restart the backend.
+
+## Current Development Notes
+
+- `bm-admin/` currently uses mock/dashboard data for some UI sections.
+- Backend admin analytics endpoints have been added for dashboard testing.
+- The admin dashboard should eventually fetch real analytics data from the backend and RDS database.
+- Real PostgreSQL seed data can be added after dashboard/API shapes are stable.
+- BM users should not need to run this app locally after deployment. Once deployed, they should only need a website link and login credentials.

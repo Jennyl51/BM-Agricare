@@ -1,50 +1,241 @@
-# Welcome to your Expo app 👋
+# BM AgriCare Mobile Frontend
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This folder contains the main BM AgriCare mobile app built with Expo and React Native.
 
-## Get started
+The mobile app supports two main user groups:
 
-1. Install dependencies
+- **Retailers**: submit invoices, view points, redeem rewards, and access product resources/news.
+- **TCEs**: review retailer invoice submissions and manage assigned retailers.
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- Expo
+- React Native
+- Expo Router
+- TypeScript
+- React Navigation
 
-   ```bash
-   npx expo start
-   ```
+## Folder Structure
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```txt
+bm-frontend/
+├── app/
+│   ├── (auth)/          # Authentication and onboarding screens
+│   ├── (retailer)/      # Retailer-facing screens
+│   └── (tce)/           # TCE-facing screens
+├── assets/              # Images and static assets
+├── components/          # Shared UI components
+├── constants/           # Shared constants/colors
+├── hooks/               # Custom React hooks
+├── services/            # API request functions
+└── scripts/             # Utility scripts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Get Started
 
-## Learn more
+Install dependencies:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm install
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Start the Expo app:
 
-## Join the community
+```bash
+npx expo start
+```
 
-Join our community of developers creating universal apps.
+In the Expo output, you can choose to open the app using:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Expo Go on a physical phone
+- iOS simulator
+- Android emulator
+- Web browser
+
+## Run on Web
+
+```bash
+npm run web
+```
+
+or:
+
+```bash
+npx expo start --web
+```
+
+## Run on Phone with Expo Go
+
+```bash
+npx expo start
+```
+
+Then scan the QR code using the Expo Go app.
+
+Make sure the phone and computer are connected to the same Wi-Fi network.
+
+## Main App Routes
+
+The app uses Expo Router with file-based routing.
+
+| Folder | Purpose |
+|---|---|
+| `app/(auth)/` | Login, onboarding, and authentication-related screens. |
+| `app/(retailer)/` | Retailer mobile app screens. |
+| `app/(tce)/` | TCE mobile app screens. |
+
+## Where to Make Common Changes
+
+| Change Type | Location |
+|---|---|
+| Login/onboarding screens | `app/(auth)/` |
+| Retailer screens | `app/(retailer)/` |
+| TCE screens | `app/(tce)/` |
+| Shared UI components | `components/` |
+| Images/assets | `assets/` |
+| App colors/constants | `constants/` |
+| API request functions | `services/` |
+
+## Change Text
+
+Most visible app text is inside files under:
+
+```txt
+app/
+```
+
+Example:
+
+```tsx
+<Text>Submit Invoice</Text>
+```
+
+Change to:
+
+```tsx
+<Text>Upload Invoice</Text>
+```
+
+## Change Colors
+
+Check shared constants first:
+
+```txt
+constants/
+```
+
+If colors are written directly inside styles, look for values such as:
+
+```tsx
+backgroundColor: "#FFFFFF"
+```
+
+Then replace with the desired color:
+
+```tsx
+backgroundColor: "#F5F1E8"
+```
+
+## Add or Replace Images
+
+Add images to:
+
+```txt
+assets/
+```
+
+Then import and use them in a screen/component:
+
+```tsx
+import productImage from "../../assets/product.png";
+
+<Image source={productImage} />
+```
+
+## Mock Data Notes
+
+Some screens may currently use local mock/demo data. As development continues, this data should be replaced with backend API calls.
+
+Common places to check:
+
+```txt
+constants/
+services/
+app/
+```
+
+## Backend API Connection
+
+API request functions should be organized under:
+
+```txt
+services/
+```
+
+The backend usually runs at:
+
+```txt
+http://127.0.0.1:8000
+```
+
+When testing on a physical phone, `127.0.0.1` refers to the phone itself, not the computer. In that case, use the computer's local network IP address instead.
+
+Example:
+
+```txt
+http://192.168.x.x:8000
+```
+
+## Common Issues / FAQ
+
+**Q: What should I do if Expo does not start?**
+
+A: Reinstall dependencies and restart Expo:
+
+```bash
+npm install
+npx expo start
+```
+
+---
+
+**Q: What should I do if changes are not showing up?**
+
+A: Restart Expo and clear cache:
+
+```bash
+npx expo start -c
+```
+
+---
+
+**Q: What should I do if the app cannot connect to backend on my phone?**
+
+A: Make sure the backend is running and replace `127.0.0.1` with your computer's local network IP address.
+
+---
+
+**Q: Where should I edit retailer pages?**
+
+A: Retailer screens are located in:
+
+```txt
+app/(retailer)/
+```
+
+---
+
+**Q: Where should I edit TCE pages?**
+
+A: TCE screens are located in:
+
+```txt
+app/(tce)/
+```
+
+## Development Notes
+
+- `bm-frontend/` is the main mobile app.
+- Retailer and TCE screens are separated using Expo Router route groups.
+- Some app content may still be mock/demo data.
+- Official BM product, news, resource, reward, and translation data should replace mock data as development continues.
