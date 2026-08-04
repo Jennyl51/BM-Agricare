@@ -1,45 +1,86 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertTriangle,
   Globe2,
   LogOut,
+  Moon,
   Save,
   Settings as SettingsIcon,
   ShieldCheck,
+  Sun,
   Type,
   UserRound,
 } from "lucide-react";
 import AdminLayout from "../components/AdminLayout";
+import {
+  clearAdminSession,
+  getSavedAdminUser,
+} from "../services/adminAuthApi";
+import type { CSSProperties, ReactNode } from "react";
+import type {
+  LanguageCode,
+  TextSize,
+  ThemeMode,
+} from "../context/AppPreferencesContext";
+import { useAppPreferences } from "../context/AppPreferencesContext";
 
-type Language = "English" | "Vietnamese" | "Chinese";
-type TextSize = "Small" | "Medium" | "Large";
+const languageOptions: { value: LanguageCode; label: string }[] = [
+  { value: "en", label: "English" },
+  { value: "vi", label: "Tiếng Việt" },
+  { value: "zh", label: "中文" },
+  { value: "ms", label: "Bahasa" },
+];
+
+const textSizeOptions: { value: TextSize; labelKey: string }[] = [
+  { value: "small", labelKey: "textSmall" },
+  { value: "medium", labelKey: "textMedium" },
+  { value: "large", labelKey: "textLarge" },
+];
+
+const themeOptions: { value: ThemeMode; labelKey: string }[] = [
+  { value: "light", labelKey: "lightMode" },
+  { value: "dark", labelKey: "darkMode" },
+];
 
 export default function Settings() {
   const navigate = useNavigate();
+  const {
+    theme,
+    language,
+    textSize,
+    setTheme,
+    setLanguage,
+    setTextSize,
+    t,
+  } = useAppPreferences();
 
-  const [adminName, setAdminName] = useState("BM Shared Admin");
-  const [adminEmail, setAdminEmail] = useState("admin@bm-agricare.com");
-  const [language, setLanguage] = useState<Language>("English");
-  const [textSize, setTextSize] = useState<TextSize>("Medium");
+  const savedAdmin = useMemo(() => getSavedAdminUser(), []);
+
   const [rememberPreferences, setRememberPreferences] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
+  const adminName = savedAdmin?.display_name || "BM Shared Admin";
+  const adminEmail = savedAdmin?.email || "admin@bm-agricare.com";
+
   const handleSave = () => {
-    setSaveMessage("Settings saved locally for this browser session.");
+    setSaveMessage(t("settingsSaved"));
     window.setTimeout(() => setSaveMessage(""), 2500);
   };
 
   const handleLogout = () => {
+    clearAdminSession();
     setShowLogoutConfirm(false);
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   return (
     <AdminLayout>
       <div className="page">
-        <div>
+        <div className="bm-brand-strip" />
+
+        <div style={{ marginTop: 22 }}>
           <p
             style={{
               margin: 0,
@@ -50,14 +91,13 @@ export default function Settings() {
               fontSize: 13,
             }}
           >
-            Shared Admin Settings
+            {t("sharedAdminSettings")}
           </p>
 
-          <h1 style={{ marginBottom: 8 }}>Settings</h1>
+          <h1 style={{ marginBottom: 8 }}>{t("settings")}</h1>
 
           <p style={{ color: "var(--text-muted)", marginTop: 0 }}>
-            Manage shared admin profile information, display preferences, and
-            logout actions for the BM Admin Dashboard.
+            {t("settingsSubtitle")}
           </p>
         </div>
 
@@ -74,8 +114,8 @@ export default function Settings() {
             <section className="card">
               <SectionHeader
                 icon={<UserRound size={22} />}
-                title="Admin Profile"
-                description="This dashboard currently uses one shared admin account for BM managers."
+                title={t("adminProfile")}
+                description={t("adminProfileDescription")}
               />
 
               <div
@@ -86,53 +126,64 @@ export default function Settings() {
                   marginTop: 20,
                 }}
               >
-                <FormField label="Admin Display Name">
-                  <input
-                    value={adminName}
-                    onChange={(event) => setAdminName(event.target.value)}
-                    style={inputStyle}
-                  />
+                <FormField label={t("adminDisplayName")}>
+                  <input value={adminName} readOnly style={inputStyle} />
                 </FormField>
 
-                <FormField label="Admin Email">
-                  <input
-                    value={adminEmail}
-                    onChange={(event) => setAdminEmail(event.target.value)}
-                    style={inputStyle}
-                  />
+                <FormField label={t("adminEmail")}>
+                  <input value={adminEmail} readOnly style={inputStyle} />
                 </FormField>
               </div>
 
               <div
                 style={{
                   marginTop: 18,
-                  background: "rgba(103, 153, 200, 0.12)",
+                  background: "var(--info-bg)",
                   border: "1px solid rgba(103, 153, 200, 0.25)",
                   borderRadius: 16,
                   padding: 16,
-                  color: "var(--bm-blue)",
+                  color: "var(--info-text)",
                   lineHeight: 1.6,
                 }}
               >
-                <strong>Note:</strong> Since BM requested one shared admin login,
-                this page does not create separate admin accounts yet. Individual
-                manager preferences can be added later if BM wants separate admin
-                users.
+                <strong>{t("profileNoteTitle")}:</strong> {t("profileNoteText")}
               </div>
             </section>
 
             <section className="card">
               <SectionHeader
                 icon={<Globe2 size={22} />}
-                title="Language Preference"
-                description="Choose the preferred dashboard language for the shared admin view."
+                title={t("languagePreference")}
+                description={t("languagePreferenceDescription")}
               />
 
               <div style={{ marginTop: 20 }}>
                 <SegmentedControl
-                  options={["English", "Vietnamese", "Chinese"]}
+                  options={languageOptions.map((option) => ({
+                    value: option.value,
+                    label: option.label,
+                  }))}
                   value={language}
-                  onChange={(value) => setLanguage(value as Language)}
+                  onChange={(value) => setLanguage(value as LanguageCode)}
+                />
+              </div>
+            </section>
+
+            <section className="card">
+              <SectionHeader
+                icon={theme === "light" ? <Sun size={22} /> : <Moon size={22} />}
+                title={t("themePreference")}
+                description={t("themePreferenceDescription")}
+              />
+
+              <div style={{ marginTop: 20 }}>
+                <SegmentedControl
+                  options={themeOptions.map((option) => ({
+                    value: option.value,
+                    label: t(option.labelKey),
+                  }))}
+                  value={theme}
+                  onChange={(value) => setTheme(value as ThemeMode)}
                 />
               </div>
             </section>
@@ -140,13 +191,16 @@ export default function Settings() {
             <section className="card">
               <SectionHeader
                 icon={<Type size={22} />}
-                title="Text Size"
-                description="Adjust dashboard text size for readability and accessibility."
+                title={t("textSize")}
+                description={t("textSizeDescription")}
               />
 
               <div style={{ marginTop: 20 }}>
                 <SegmentedControl
-                  options={["Small", "Medium", "Large"]}
+                  options={textSizeOptions.map((option) => ({
+                    value: option.value,
+                    label: t(option.labelKey),
+                  }))}
                   value={textSize}
                   onChange={(value) => setTextSize(value as TextSize)}
                 />
@@ -155,30 +209,23 @@ export default function Settings() {
               <div
                 style={{
                   marginTop: 20,
-                  border: "1px solid var(--border)",
+                  border: "1px solid var(--border-soft)",
                   borderRadius: 16,
                   padding: 18,
-                  background: "#fff",
+                  background: "var(--bg-soft)",
                 }}
               >
                 <p style={{ color: "var(--text-muted)", marginTop: 0 }}>
-                  Preview
+                  {t("preview")}
                 </p>
 
                 <p
                   style={{
-                    fontSize:
-                      textSize === "Small"
-                        ? 14
-                        : textSize === "Large"
-                        ? 20
-                        : 16,
                     lineHeight: 1.7,
                     marginBottom: 0,
                   }}
                 >
-                  This is how dashboard text may look with the selected text
-                  size.
+                  {t("previewText")}
                 </p>
               </div>
             </section>
@@ -188,8 +235,8 @@ export default function Settings() {
             <section className="card">
               <SectionHeader
                 icon={<SettingsIcon size={22} />}
-                title="Preference Memory"
-                description="Local preference memory for the current browser."
+                title={t("preferenceMemory")}
+                description={t("preferenceMemoryDescription")}
               />
 
               <label
@@ -211,10 +258,9 @@ export default function Settings() {
                 />
 
                 <span>
-                  <strong>Remember display preferences</strong>
+                  <strong>{t("rememberDisplayPreferences")}</strong>
                   <p style={{ margin: "4px 0 0", color: "var(--text-muted)" }}>
-                    For now, this is a placeholder for future local storage or
-                    database-backed admin preferences.
+                    {t("rememberDisplayPreferencesDescription")}
                   </p>
                 </span>
               </label>
@@ -232,14 +278,14 @@ export default function Settings() {
                 }}
               >
                 <Save size={18} />
-                Save Settings
+                {t("saveSettings")}
               </button>
 
               {saveMessage && (
                 <p
                   style={{
                     marginBottom: 0,
-                    color: "#2f7d32",
+                    color: "var(--success-text)",
                     fontWeight: 700,
                   }}
                 >
@@ -251,24 +297,23 @@ export default function Settings() {
             <section className="card">
               <SectionHeader
                 icon={<ShieldCheck size={22} />}
-                title="Access & Security"
-                description="Manage logout for the shared admin session."
+                title={t("accessSecurity")}
+                description={t("accessSecurityDescription")}
               />
 
               <div
                 style={{
                   marginTop: 18,
-                  background: "rgba(251, 176, 52, 0.14)",
+                  background: "var(--warning-bg)",
                   border: "1px solid rgba(251, 176, 52, 0.35)",
                   borderRadius: 16,
                   padding: 16,
-                  color: "#7a4b00",
+                  color: "var(--warning-text)",
                   lineHeight: 1.6,
                 }}
               >
-                <strong>Shared account reminder:</strong> Multiple managers may
-                use the same admin login, so avoid changing settings during an
-                active review session unless the team agrees.
+                <strong>{t("sharedAccountReminderTitle")}:</strong>{" "}
+                {t("sharedAccountReminderText")}
               </div>
 
               <button
@@ -284,7 +329,7 @@ export default function Settings() {
                 }}
               >
                 <LogOut size={18} />
-                Log Out
+                {t("logout")}
               </button>
             </section>
           </div>
@@ -298,8 +343,8 @@ export default function Settings() {
                   width: 48,
                   height: 48,
                   borderRadius: "50%",
-                  background: "rgba(227, 27, 35, 0.12)",
-                  color: "var(--ingredients-red)",
+                  background: "var(--danger-bg)",
+                  color: "var(--danger-text)",
                   display: "grid",
                   placeItems: "center",
                   marginBottom: 16,
@@ -308,11 +353,10 @@ export default function Settings() {
                 <AlertTriangle size={24} />
               </div>
 
-              <h2 style={{ marginTop: 0 }}>Log out of admin dashboard?</h2>
+              <h2 style={{ marginTop: 0 }}>{t("logoutConfirmTitle")}</h2>
 
               <p style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>
-                This will return you to the login page. Any unsaved local edits
-                may be lost.
+                {t("logoutConfirmText")}
               </p>
 
               <div
@@ -327,11 +371,11 @@ export default function Settings() {
                   className="secondary-btn"
                   onClick={() => setShowLogoutConfirm(false)}
                 >
-                  Cancel
+                  {t("cancel")}
                 </button>
 
                 <button className="danger-btn" onClick={handleLogout}>
-                  Log Out
+                  {t("logout")}
                 </button>
               </div>
             </div>
@@ -347,7 +391,7 @@ function SectionHeader({
   title,
   description,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
 }) {
@@ -358,8 +402,8 @@ function SectionHeader({
           width: 42,
           height: 42,
           borderRadius: 14,
-          background: "rgba(103, 153, 200, 0.16)",
-          color: "var(--bm-blue)",
+          background: "var(--info-bg)",
+          color: "var(--info-text)",
           display: "grid",
           placeItems: "center",
           flexShrink: 0,
@@ -383,7 +427,7 @@ function FormField({
   children,
 }: {
   label: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <label style={{ display: "grid", gap: 8 }}>
@@ -400,7 +444,7 @@ function SegmentedControl({
   value,
   onChange,
 }: {
-  options: string[];
+  options: { value: string; label: string }[];
   value: string;
   onChange: (value: string) => void;
 }) {
@@ -408,19 +452,21 @@ function SegmentedControl({
     <div
       style={{
         display: "inline-flex",
-        background: "#fff",
-        border: "1px solid var(--border)",
+        background: "var(--bg-card)",
+        border: "1px solid var(--border-soft)",
         borderRadius: 16,
         overflow: "hidden",
+        flexWrap: "wrap",
       }}
     >
       {options.map((option) => {
-        const active = option === value;
+        const active = option.value === value;
 
         return (
           <button
-            key={option}
-            onClick={() => onChange(option)}
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
             style={{
               border: "none",
               padding: "12px 16px",
@@ -430,7 +476,7 @@ function SegmentedControl({
               fontWeight: 800,
             }}
           >
-            {option}
+            {option.label}
           </button>
         );
       })}
@@ -438,17 +484,17 @@ function SegmentedControl({
   );
 }
 
-const inputStyle: React.CSSProperties = {
+const inputStyle: CSSProperties = {
   width: "100%",
-  border: "1px solid var(--border)",
+  border: "1px solid var(--border-soft)",
   borderRadius: 14,
   padding: "12px",
-  background: "white",
+  background: "var(--bg-soft)",
   color: "var(--text-main)",
   outline: "none",
 };
 
-const modalBackdropStyle: React.CSSProperties = {
+const modalBackdropStyle: CSSProperties = {
   position: "fixed",
   inset: 0,
   background: "rgba(16, 32, 51, 0.45)",

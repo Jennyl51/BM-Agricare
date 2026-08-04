@@ -6,6 +6,8 @@ python-multipart
 # AWS Services (Cognito, RDS, EC2)
 boto3
 python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==4.0.1
 
 # Database (RDS)
 sqlalchemy

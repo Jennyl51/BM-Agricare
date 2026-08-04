@@ -3,7 +3,7 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import Navbar from '@/components/Navbar';
-import { getGuidelinesList } from '@/services/guidelinesApi';
+import { getGuidelinesList, getNewsList } from '@/services/guidelinesApi';
 import { BM } from '@/constants/theme';
 import { BackgroundBlobs, BounceButton, EmptyState, FadeIn, InsetOverlay } from '@/components/AgricareUI';
 import { useApp } from '@/components/AppContext';

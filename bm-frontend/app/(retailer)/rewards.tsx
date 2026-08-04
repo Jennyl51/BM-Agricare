@@ -9,7 +9,22 @@ import { useApp } from '@/components/AppContext';
 import { getPointsHistory, getPointsSummary, getRewardsList, redeemReward } from '@/services/rewardApi';
 import { getProductsList } from '@/services/productsApi';
 
-type Reward = { reward_id: string; name: string; description?: string; points_needed: number; tier_requirement: string; quantity_available?: number | null };
+// type Reward = { reward_id: string; name: string; description?: string; points_needed: number; tier_requirement: string; quantity_available?: number | null };
+
+type Reward = {
+  reward_id: string;
+  rwd_id?: number | null;
+  name: string;
+  description?: string | null;
+  points_needed: number;
+  tier_requirement: string;
+  quantity_available?: number | null;
+  related_product?: string | null;
+  image_url?: string | null;
+  is_pinned?: boolean;
+  is_seasonal?: boolean;
+  is_visible?: boolean;
+};
 
 type History = { id?: string; points_earned?: number; points_redeemed?: number; description?: string; occurred_at?: string };
 
@@ -30,29 +45,67 @@ export default function RewardsScreen() {
   const [products, setProducts] = useState<any[]>([]);
   const [selected, setSelected] = useState<Reward | null>(null);
   const [confetti, setConfetti] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [introFall, setIntroFall] = useState(true);
   const [tierFallReady, setTierFallReady] = useState(false);
 
-  const refresh = () => Promise.all([
-    getRewardsList(), getPointsSummary(), getPointsHistory(), getProductsList(),
-  ]).then(([rewardData, summary, historyData, productData]: any[]) => {
+  // const refresh = () => Promise.all([
+  //   getRewardsList(), getPointsSummary(), getPointsHistory(), getProductsList(),
+  // ]).then(([rewardData, summary, historyData, productData]: any[]) => {
+  //   setRewards(Array.isArray(rewardData) ? rewardData : []);
+  //   setPoints(Number(summary?.total_points || 0));
+  //   setTier(summary?.tier || 'Starter');
+  //   setNextTier(Number(summary?.next_tier_points || 0));
+  //   setHistory(Array.isArray(historyData) ? historyData : []);
+  //   setProducts(Array.isArray(productData) ? productData : []);
+  // });
+  const refresh = () =>
+  getRewardsList().then((rewardData: any[]) => {
     setRewards(Array.isArray(rewardData) ? rewardData : []);
-    setPoints(Number(summary?.total_points || 0));
-    setTier(summary?.tier || 'Starter');
-    setNextTier(Number(summary?.next_tier_points || 0));
-    setHistory(Array.isArray(historyData) ? historyData : []);
-    setProducts(Array.isArray(productData) ? productData : []);
+
+    // Temporary local display values while testing rewards API only.
+    // This prevents /points/history, /points/summary, and /products from firing.
+    setPoints(100);
+    setTier('Diamond');
+    setNextTier(0);
+    setHistory([]);
+    setProducts([]);
   });
 
   useEffect(() => { refresh().catch(() => null); }, []);
 
+  // const redeem = async (reward: Reward) => {
+  //   if (points < reward.points_needed) return;
+  //   await redeemReward(reward.reward_id, 1);
+  //   setSelected(null);
+  //   setConfetti(true);
+  //   setTimeout(() => setConfetti(false), 3900);
+  //   refresh().catch(() => null);
+  // };
   const redeem = async (reward: Reward) => {
     if (points < reward.points_needed) return;
-    await redeemReward(reward.reward_id, 1);
+  
+    // Temporary demo behavior:
+    // Rewards are loaded from backend SQL, but redemption POST is mocked locally for now.
     setSelected(null);
     setConfetti(true);
+    setSuccessMessage(`Redeemed successfully: ${reward.name}`);
+  
     setTimeout(() => setConfetti(false), 3900);
-    refresh().catch(() => null);
+    setTimeout(() => setSuccessMessage(''), 3200);
+  
+    setHistory((current: any[]) => [
+      {
+        id: `demo-redemption-${Date.now()}`,
+        points_earned: 0,
+        points_redeemed: reward.points_needed,
+        description: `Demo redemption request: ${reward.name}`,
+        occurred_at: new Date().toISOString().slice(0, 10),
+      },
+      ...current,
+    ]);
+  
+    setPoints((current) => Math.max(0, Number(current || 0) - reward.points_needed));
   };
 
   const startTierFall = useCallback(() => setTierFallReady(true), []);
@@ -69,6 +122,15 @@ export default function RewardsScreen() {
       <FallingSprites variant={rewardFallVariant} count={28} duration={5600} active={tierFallReady} />
       <FallingSprites variant="all" count={200} duration={2500} loop={false} active={confetti} />
       <Confetti play={confetti} />
+      {successMessage ? (
+        <View style={styles.successToast}>
+          <Text style={styles.successIcon}>✓</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.successTitle}>Redeem successful</Text>
+            <Text style={styles.successText}>{successMessage}</Text>
+          </View>
+        </View>
+      ) : null}
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
           <Text style={styles.heroKicker}>Reward Center</Text>
@@ -89,7 +151,12 @@ export default function RewardsScreen() {
             const canRedeem = points >= reward.points_needed;
             return <Pressable key={reward.reward_id} style={[styles.rewardRow, { borderColor: theme.border }]} onPress={() => setSelected(reward)}>
               <View style={[styles.rewardIcon, !canRedeem && { backgroundColor: '#AAB7A7' }]}><Feather name={canRedeem ? 'gift' : 'lock'} size={22} color="#FFFFFF" /></View>
-              <View style={{ flex: 1 }}><Text style={[styles.rewardName, { color: theme.text }]}>{reward.name}</Text><Text style={[styles.rewardDesc, { color: theme.muted }]}>{reward.description}</Text></View>
+              <View style={{ flex: 1 }}><Text style={[styles.rewardName, { color: theme.text }]}>{reward.name}</Text>
+              {/* <Text style={[styles.rewardDesc, { color: theme.muted }]}>{reward.description}</Text> */}
+              <Text style={[styles.rewardDesc, { color: theme.muted }]}>
+                {reward.related_product ? `Product: ${reward.related_product}` : reward.description}
+              </Text>
+              </View>
               <View style={{ alignItems: 'flex-end' }}><Text style={styles.rewardPoints}>{reward.points_needed.toLocaleString()}</Text><Text style={styles.rewardTier}>{reward.tier_requirement}</Text></View>
             </Pressable>;
           })}
@@ -169,4 +236,47 @@ const styles = StyleSheet.create({
   modalCost: { color: BM.deepBlue, fontWeight: '900', fontSize: 22, marginTop: 16 },
   redeemButton: { backgroundColor: BM.deepBlue, borderRadius: 17, paddingHorizontal: 24, paddingVertical: 15, marginTop: 16 },
   redeemText: { color: '#fff', fontWeight: '900' },
+  successToast: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 110,
+    zIndex: 999,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 18,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: 'rgba(122, 193, 67, 0.45)',
+    shadowColor: '#000',
+    shadowOpacity: 0.14,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
+  },
+  successIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#7AC143',
+    color: '#ffffff',
+    textAlign: 'center',
+    lineHeight: 34,
+    fontSize: 20,
+    fontWeight: '900',
+  },
+  successTitle: {
+    fontSize: 15,
+    fontWeight: '900',
+    color: '#06357A',
+  },
+  successText: {
+    marginTop: 2,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#666',
+  },
 });

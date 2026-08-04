@@ -1,18 +1,308 @@
 :root {
-    --bm-blue: #06357a;
-    --bm-gray: #807f83;
-    --agricare-green: #7ac143;
-    --ingredients-red: #e31b23;
-    --chemicals-yellow: #fbb034;
-    --polymers-sky-blue: #6799c8;
-  
-    --bg: #f7faf5;
-    --card-bg: #ffffff;
-    --text-main: #102033;
-    --text-muted: #667085;
-    --border: #e5e7eb;
-  
-    --radius-lg: 20px;
-    --radius-md: 14px;
-    --shadow-card: 0 10px 30px rgba(6, 53, 122, 0.08);
+  font-family: Arial, Helvetica, sans-serif;
+  --font-scale: 1;
+
+  /* BM official brand colors */
+  --bm-blue-brand: #06357a;
+  --bm-gray: #807f83;
+  --bm-green: #7ac143;
+  --bm-red: #e31b23;
+  --bm-yellow: #fbb034;
+  --bm-sky-blue: #6799c8;
+
+  /* Semantic brand colors used by the app */
+  --bm-blue: var(--bm-blue-brand);
+  --bm-green-dark: #4f8f20;
+  --bm-green-soft: #eef8e8;
+
+  /* Old variable names kept so existing code does not break */
+  --agricare-green: var(--bm-green);
+  --ingredients-red: var(--bm-red);
+  --chemicals-yellow: var(--bm-yellow);
+  --polymers-sky-blue: var(--bm-sky-blue);
+
+  /* Light mode */
+  --bg-main: #f7faf5;
+  --bg-soft: #eef4ea;
+  --bg-card: #ffffff;
+
+  --text-main: #102033;
+  --text-muted: #667085;
+  --text-inverse: #ffffff;
+  --text-brand-readable: var(--bm-blue-brand);
+
+  --border-soft: #e5e7eb;
+
+  /* Sidebar */
+  --sidebar-bg: #6fb84a;
+  --sidebar-bg-dark: #4f8f20;
+  --sidebar-active-bg: rgba(6, 53, 122, 0.22);
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.18);
+  --sidebar-text: #ffffff;
+  --sidebar-muted: rgba(255, 255, 255, 0.82);
+
+  /* Old layout variables kept */
+  --bg: var(--bg-main);
+  --card-bg: var(--bg-card);
+  --border: var(--border-soft);
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --shadow-card: 0 10px 30px rgba(6, 53, 122, 0.08);
+
+  /* Status colors */
+  --success-bg: rgba(122, 193, 67, 0.15);
+  --success-text: #2f7d32;
+
+  --warning-bg: rgba(251, 176, 52, 0.18);
+  --warning-text: #9a6700;
+
+  --danger-bg: rgba(227, 27, 35, 0.12);
+  --danger-text: #e31b23;
+
+  --info-bg: rgba(103, 153, 200, 0.16);
+  --info-text: #06357a;
+}
+
+[data-theme="dark"] {
+  --bg-main: #101828;
+  --bg-soft: #182230;
+  --bg-card: #1d2939;
+
+  --text-main: #f9fafb;
+  --text-muted: #cdd5df;
+  --text-inverse: #ffffff;
+
+  /* This fixes dark blue text being unreadable in dark mode */
+  --bm-blue: #a9d4ff;
+  --text-brand-readable: #a9d4ff;
+
+  --border-soft: #344054;
+
+  --sidebar-bg: #4f8f20;
+  --sidebar-bg-dark: #315f25;
+  --sidebar-active-bg: rgba(255, 255, 255, 0.22);
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.14);
+  --sidebar-text: #ffffff;
+  --sidebar-muted: rgba(255, 255, 255, 0.78);
+
+  --bg: var(--bg-main);
+  --card-bg: var(--bg-card);
+  --border: var(--border-soft);
+
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.28);
+
+  --success-bg: rgba(122, 193, 67, 0.22);
+  --success-text: #a6e77a;
+
+  --warning-bg: rgba(251, 176, 52, 0.22);
+  --warning-text: #ffd37a;
+
+  --danger-bg: rgba(227, 27, 35, 0.2);
+  --danger-text: #ff8a8f;
+
+  --info-bg: rgba(103, 153, 200, 0.22);
+  --info-text: #a9d4ff;
+}
+
+/* Text size modes. These MUST stay outside @media print. */
+[data-text-size="small"] {
+  --font-scale: 0.92;
+}
+
+[data-text-size="medium"] {
+  --font-scale: 1;
+}
+
+[data-text-size="large"] {
+  --font-scale: 1.12;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  font-size: calc(16px * var(--font-scale, 1));
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+.page {
+  min-height: calc(100vh - 48px);
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.card {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 22px;
+}
+
+.primary-btn {
+  border: none;
+  border-radius: 12px;
+  background: var(--bm-blue-brand);
+  color: white;
+  font-weight: 800;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+.primary-btn:hover {
+  background: #042653;
+  transform: translateY(-1px);
+}
+
+.primary-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+.secondary-btn {
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-brand-readable);
+  font-weight: 800;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease, border 0.15s ease;
+}
+
+.secondary-btn:hover {
+  border-color: var(--text-brand-readable);
+  transform: translateY(-1px);
+}
+
+.danger-btn {
+  border: none;
+  border-radius: 12px;
+  background: var(--bm-red);
+  color: white;
+  font-weight: 800;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+.danger-btn:hover {
+  background: #b9151c;
+  transform: translateY(-1px);
+}
+
+.danger-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+input,
+select,
+textarea {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-soft);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid rgba(103, 153, 200, 0.4);
+  border-color: var(--bm-sky-blue);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.status-approved {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.status-pending {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.status-rejected {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.status-info {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+
+.bm-brand-strip {
+  height: 5px;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--bm-blue-brand),
+    var(--bm-green),
+    var(--bm-yellow),
+    var(--bm-red),
+    var(--bm-sky-blue)
+  );
+}
+
+.no-print {
+  display: initial;
+}
+
+@media print {
+  nav,
+  aside,
+  button,
+  .no-print {
+    display: none !important;
   }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .page,
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+}

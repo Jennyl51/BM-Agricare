@@ -20,14 +20,25 @@ router = APIRouter(tags=["rewards"])
 
 class RewardOut(BaseModel):
     reward_id: str
+    rwd_id: Optional[int] = None
     name: str
     points_needed: int
     quantity_available: Optional[int]
     tier_requirement: str
+    description: Optional[str] = None
+    related_product: Optional[str] = None
+    image_url: Optional[str] = None
+    is_pinned: Optional[bool] = False
+    is_seasonal: Optional[bool] = False
+    is_visible: Optional[bool] = True
 
 
 @router.get("/rewards", response_model=List[RewardOut])
 def rewards_get(user=Depends(get_current_user)):
+    return get_rewards_list()
+
+@router.get("/demo/rewards", response_model=List[RewardOut])
+def demo_rewards_get():
     return get_rewards_list()
 
 
